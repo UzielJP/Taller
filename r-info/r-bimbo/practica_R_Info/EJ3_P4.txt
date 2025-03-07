@@ -1,0 +1,85 @@
+programa EJ3_P4
+procesos
+  proceso agarrarPapel(ES bolsa:numero E papel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)&(bolsa<papel)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso depositarP(E bolsaP:numero)
+  comenzar
+    repetir bolsaP
+      depositarPapel
+  fin
+  proceso depositarP2(E papel:numero)
+  comenzar
+    repetir papel
+      depositarPapel
+  fin
+  proceso consumir(E papel:numero ES bolsa:numero)
+  comenzar
+    repetir papel
+      si(HayPapelEnLaEsquina)
+        tomarPapel
+  fin
+areas
+  areapP1: AreaP(1,1,1,100)
+  areapP2: AreaP(2,1,2,100)
+  areapP3: AreaP(3,1,3,100)
+  areapFiscal: AreaP(100,100,100,100)
+robots
+  robot Barrera
+  variables
+    Id:numero
+    temporal:numero
+    papel:numero
+    bolsa:numero
+    bolsat:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    bolsat:=0
+    Random(papel,1,5)
+    mientras(PosCa<100)
+      mientras(bolsat<papel)&(PosCa<100)
+        si(HayPapelEnLaEsquina)
+          tomarPapel
+          bolsat:=bolsat+1
+        sino
+          mover
+      bolsa:=bolsat
+      bolsat:=0
+      si(Id=1)
+        EnviarMensaje(Id,R2)
+        EnviarMensaje(Id,R3)
+      sino
+        si(Id=2)
+          EnviarMensaje(Id,R1)
+          EnviarMensaje(Id,R3)
+        sino
+          EnviarMensaje(Id,R1)
+          EnviarMensaje(Id,R2)
+      repetir 2
+        RecibirMensaje(temporal,*)
+  fin
+  robot Coorinador
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+  fin
+variables
+  R1:Barrera
+  R2:Barrera
+  R3:Barrera
+  Fiscal:Coorinador
+comenzar
+  AsignarArea(R1,areapP1)
+  AsignarArea(R2,areapP2)
+  AsignarArea(R3,areapP3)
+  AsignarArea(Fiscal,areapFiscal)
+  Iniciar(R1,1,1)
+  Iniciar(R2,2,1)
+  Iniciar(R3,3,1)
+  Iniciar(Fiscal,100,100)
+fin

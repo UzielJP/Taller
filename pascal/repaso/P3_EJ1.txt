@@ -1,0 +1,279 @@
+program P3_EJ1;
+type
+    socio=record
+        nums:integer;
+        nombre:string;
+        edad:integer;
+    end;
+    
+    arbol=^nodoa;
+    
+    nodoa=record
+        dato:socio;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure leera(var r:socio);
+    begin
+        writeln('Ingresar Numero de socio');
+        readln(r.nums);
+        if(r.nums<>0)then begin
+            writeln('Ingresar Edad de socio');
+            readln(r.edad);
+            writeln('Ingresar nombre de socio');
+            readln(r.nombre);
+        end;
+    end;
+    
+    procedure crearA(var a:arbol; r:socio);
+    begin
+        if(a<>nil)then 
+            begin
+                if(r.nums<=a^.dato.nums)then
+                    crearA(a^.hi,r)
+                else
+                    crearA(a^.hd,r);
+            end
+        else 
+            begin
+                new(a);
+                a^.dato:=r;
+                a^.hi:=nil;
+                a^.hd:=nil;
+            end;
+    end;
+    
+    function MaxS(a:arbol):integer;
+    begin
+        if(a^.hd<>nil)then 
+            MaxS:=MaxS(a^.hd)
+        else
+            MaxS:=a^.dato.nums;
+    end;
+    
+    function MinS(a:arbol):integer;
+    begin
+        if(a^.hi<>nil)then
+            MinS:=MinS(a^.hi)
+        else
+            MinS:=a^.dato.nums;
+    end;
+    
+    procedure MayorYMenor(a:arbol);
+    var
+        max:integer;
+        min:integer;
+    begin
+        if(a<>nil)then 
+        begin
+            max:=MaxS(a);
+            min:=MinS(a);
+            writeln('El numero de socio menor es:',min);
+            writeln('El numero de socio mayor es:',max);
+        end;
+    end;
+    
+    procedure MaxEdad(a:arbol; var x:integer; var nums:integer);
+    begin
+        if(a<>nil)then begin
+            
+            if(x<a^.dato.edad)then
+            begin
+                x:=a^.dato.edad;
+                nums:=a^.dato.nums;
+            end;
+            
+            MaxEdad(a^.hi,x,nums);
+            MaxEdad(a^.hd,x,nums);
+        end;
+    end;
+    
+    procedure Mas1(a:arbol);
+    begin
+        if(a<>nil)then
+        begin
+            a^.dato.edad:=a^.dato.edad+1;
+            Mas1(a^.hi);
+            Mas1(a^.hi);
+        end;
+    end;
+    
+    function ExisteSocio(a:arbol;x:integer):boolean;
+    begin
+        if(a<>nil)then
+            begin
+                if(x=a^.dato.nums)then
+                    ExisteSocio:=true
+                else 
+                    begin
+                        if(x<a^.dato.nums)then
+                            ExisteSocio:=ExisteSocio(a^.hi,x)
+                        else
+                            ExisteSocio:=ExisteSocio(a^.hd,x);
+                    end;
+            end
+        else
+            ExisteSocio:=false;
+    end;
+    
+    function ExisteNombre(a:arbol;x:string):boolean;
+    begin
+        if(a<>nil)then
+            begin
+                if(x=a^.dato.nombre)then
+                    ExisteNombre:=true
+                else
+                    begin
+                        ExisteNombre:=ExisteNombre(a^.hi,x);
+                        ExisteNombre:=ExisteNombre(a^.hd,x);
+                    end;
+            end
+        else
+            ExisteNombre:=false;
+    end;
+    
+    procedure CantS(a:arbol; var x:integer);
+    begin
+        if(a<>nil)then
+        begin
+            x:=x+1;
+            CantS(a^.hi,x);
+            CantS(a^.hd,x);
+        end;
+    end;
+    
+    procedure Prom(a:arbol; var P:real);
+    begin
+        if(a<>nil)then
+        begin
+            P:=P+a^.dato.edad;
+            Prom(a^.hi,P);
+            Prom(a^.hd,P);
+        end;
+    end;
+    
+    procedure PromEdad(a:arbol);
+    var
+        cant:integer;
+        rom:real;
+    begin
+        cant:=0;
+        rom:=0;
+        CantS(a,cant);
+        Prom(a,rom);
+        writeln('Hay un total de: ',cant,' socios. Con un promedio de edad de: ',rom/cant);
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then
+        begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango(a:arbol; n1:integer; n2:integer; var x:integer);
+    begin
+        if(a<>nil)then
+        begin
+            Writeln('adentro del loop 0');
+            Writeln('numero de socio:',a^.dato.nums);
+            Writeln('numero n1:',n1);
+            if(a^.dato.nums>=n1)then
+                begin
+                    Writeln('adentro del loop 1');
+                    Writeln('numero de socio:',a^.dato.nums);
+                    Writeln('numero n2:',n2);
+                    if(a^.dato.nums<=n2)then
+                        begin
+                            Writeln('adentro del loop 2');
+                            Writeln('numero de socio:',a^.dato.nums);
+                            x:=x+1;
+                            Rango(a^.hi,n1,n2,x);
+                            Rango(a^.hd,n1,n2,x);
+                        end
+                    else
+                        Rango(a^.hi,n1,n2,x);
+                end
+            else
+                Rango(a^.hd,n1,n2,x);
+        end;
+    end;
+    
+    procedure DosRangos(a:arbol);
+    var
+        num1:integer;
+        num2:integer;
+        x:integer;
+    begin
+        x:=0;
+        Writeln('Ingresar primer numero del rango');
+        readln(num1);
+        Writeln('Ingresar segundo numero del rango');
+        readln(num2);
+        change(num1,num2);
+        Rango(a,num1,num2,x);
+        Writeln('La cantidad total de usuarios entre esos rangos es de: ',x);
+    end;
+    
+    procedure InformarDes(a:arbol);
+    begin
+        if(a<>nil)then
+        begin
+            InformarDes(a^.hi);
+            Writeln(a^.dato.nums);
+            InformarDes(a^.hd);
+        end;
+    end;
+    
+    procedure InformarAs(a:arbol);
+    begin
+        if(a<>nil)then
+        begin
+            InformarAs(a^.hd);
+            Writeln(a^.dato.nums);
+            InformarAs(a^.hi);
+        end;
+    end;
+
+var
+    r:socio;
+    a:arbol;
+    max:integer;
+    min:integer;
+    MasEdad:integer;
+    AcumEdad:integer;
+    numeroS:integer;
+    noms:string;
+    cant:integer;
+begin
+    a:=nil;
+    AcumEdad:=0;
+    cant:=0;
+    leera(r);
+    while(r.nums<>0)do begin
+        crearA(a,r);
+        leera(r);
+    end;
+    CantS(a,cant);
+    Writeln('La cantidad total de socios es de: ',cant);
+    InformarDes(a);
+    InformarAs(a);
+    MayorYMenor(a);
+    PromEdad(a);
+    MaxEdad(a,AcumEdad,MasEdad);
+    Writeln('Usuario con mayor edad: ',MasEdad);
+    Mas1(a);
+    Writeln('Ingresar numero de socio: ');
+    readln(numeroS);
+    Writeln('Ingresar numero de socio: ',ExisteSocio(a,numeroS));
+    Writeln('Ingresar nombre de socio: ');
+    readln(noms);
+    Writeln('Ingresar numero de socio: ',ExisteNombre(a,noms));
+    DosRangos(a);
+end.

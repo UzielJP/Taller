@@ -1,0 +1,107 @@
+programa ejemTeFollo2
+procesos 
+  proceso dejarP(ES c:numero) 
+  comenzar 
+    repetir 5 
+      depositarPapel 
+      c:=c-1 
+  fin 
+  proceso transportar(ES c:numero E av:numero E ca:numero)  
+  comenzar  
+    BloquearEsquina(50,50) 
+    Pos(50,50) 
+    dejarP(c) 
+    Pos(av,ca) 
+    LiberarEsquina(50,50) 
+  fin  
+  proceso tomarPapelC(ES c:numero E av:numero E ca:numero)  
+  comenzar   
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel 
+      c:=c+1 
+      si(c=5) 
+        transportar(c,av,ca) 
+  fin 
+  proceso recorrerP 
+  variables 
+    av:numero 
+    ca:numero 
+    c:numero 
+  comenzar 
+    c:=0 
+    mientras(PosAv<100) 
+      av:=PosAv 
+      ca:=PosCa 
+      tomarPapelC(c,av,ca) 
+      mover 
+  fin 
+  proceso comprobar(ES h:numero E cantF:numero E bolsa:numero)  
+  comenzar  
+    si(bolsa=cantF)  
+      repetir cantF  
+        depositarPapel  
+        h:=0  
+    sino 
+      h:=h+1 
+  fin 
+  proceso papelEsquina(E cantF:numero ES bolsa:numero E av:numero E ca:numero) 
+  comenzar 
+    BloquearEsquina(50,50) 
+    Pos(50,50)  
+    repetir cantF 
+      si(HayPapelEnLaEsquina) 
+        tomarPapel 
+        bolsa:=bolsa+1 
+    Pos(av,ca)    
+    LiberarEsquina(50,50) 
+  fin 
+  proceso recorrerC  
+  variables  
+    h:numero  
+    cantF:numero 
+    bolsa:numero  
+    ca:numero   
+    av:numero   
+  comenzar 
+    h:=0 
+    av:=PosAv 
+    ca:=PosCa 
+    mientras(h<8) 
+      bolsa:=0  
+      Random(cantF,2,5) 
+      papelEsquina(cantF,bolsa,av,ca) 
+      comprobar(h,cantF,bolsa)  
+  fin 
+areas
+  areaPro: AreaPC(12,1,100,2) 
+  areaCon: AreaPC(11,1,11,100)
+  areaComp: AreaC(50,50,50,50) 
+robots 
+  robot Productor   
+  comenzar
+    derecha 
+    recorrerP 
+  fin  
+  robot Consumidor  
+  comenzar
+    recorrerC
+  fin  
+variables
+  productor1:Productor
+  productor2:Productor
+  consumidor1:Consumidor
+  consumidor2:Consumidor
+comenzar
+  AsignarArea(productor1,areaPro)
+  AsignarArea(productor1,areaComp)   
+  AsignarArea(productor2,areaPro)
+  AsignarArea(productor2,areaComp)   
+  AsignarArea(consumidor1,areaCon)
+  AsignarArea(consumidor1,areaComp)  
+  AsignarArea(consumidor2,areaCon)
+  AsignarArea(consumidor2,areaComp)  
+  Iniciar(productor1,12,1) 
+  Iniciar(productor2,12,2) 
+  Iniciar(consumidor1,11,1)
+  Iniciar(consumidor2,11,2)
+fin 

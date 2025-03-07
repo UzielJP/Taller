@@ -1,0 +1,282 @@
+program Hello;
+type
+    
+    Alumno=record
+        legajo:integer;
+        dni:integer;
+        anoing:integer;
+    end;
+    
+    final=record
+        codigoF:integer;
+        nota:integer;
+    end;
+    
+    RegProm=record
+        legajo:integer;
+        promedio:real;
+    end;
+    
+    RegAno=record
+        dni:integer;
+        ano:integer;
+    end;
+    
+    ListaNota=^nodoNota;
+    
+    nodoNota=record
+        dato:final;
+        sig:ListaNota;
+    end;
+    
+    ListaAno=^nodoAno;
+    
+    nodoAno=record
+        dato:RegAno;
+        sig:ListaAno;
+    end;
+    
+    ListaP=^nodoP;
+    
+    nodoP=record
+        dato:RegProm;
+        sig:ListaP;
+    end;
+    
+    arbol= ^nodoA;
+    
+    nodoA=record
+        dato:Alumno;
+        notas:ListaNota;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure crearL(var l:ListaNota; r:final);
+    var
+        aux:ListaNota;
+        ant:ListaNota;
+        act:ListaNota;
+    begin
+        new(aux);
+        aux^.dato:=r;
+        ant:=l;
+        act:=l;
+        
+        while(act<>nil)and(r.codigoF>act^.dato.codigoF)do begin
+            ant:=act;
+            act:=act^.sig;
+        end;
+        
+        if(ant=act)then
+            l:=aux
+        else
+            ant^.sig:=aux;
+        aux^.sig:=act;
+    end;
+    
+    procedure cargarL(var l:ListaNota);
+    var
+        r:final;
+    begin
+        Writeln('Ingresar codigo final (<>-1)');
+        readln(r.codigoF);
+        while(r.codigoF<>-1)do begin
+            Writeln('Ingresar nota final');
+            readln(r.nota);
+            if(r.nota>4)then begin
+                crearL(l,r);
+                Writeln('se agrego el final');
+            end;
+            Writeln('Ingresar codigo final (<>-1)');
+            readln(r.codigoF);
+        end;
+    end;
+    
+    procedure LeerA(var r:alumno);
+    begin
+        Writeln('Ingresar legajo (<>0)');
+        readln(r.legajo);
+        if(r.legajo<>0)then begin
+            Writeln('Ingresar dni');
+            readln(r.dni);
+            Writeln('Ingresar año ingreso');
+            readln(r.anoing);
+        end;
+    end;
+    
+    procedure CrearA(var a:arbol; r:alumno);
+    begin
+        if(a<>nil)then
+        begin
+            if(r.legajo<=a^.dato.legajo)then
+                CrearA(a^.hi,r)
+            else
+                CrearA(a^.hd,r);
+        end
+        else
+        begin
+            new(a);
+            a^.dato:=r;
+            a^.hi:=nil;
+            a^.hd:=nil;
+            cargarL(a^.notas);
+        end;
+    end;
+    
+    procedure CargarA(var a:arbol);
+    var 
+        r:alumno;
+    begin
+        LeerA(r);
+        while(r.legajo<>0)do begin
+            CrearA(a,r);
+            LeerA(r);
+        end;
+    end;
+    
+    function MaxLegajo(a:arbol):integer;
+    begin
+        if(a^.hd<>nil)then
+            MaxLegajo:=MaxLegajo(a^.hd)
+        else
+            MaxLegajo:=a^.dato.legajo;
+    end;
+    
+    procedure CantLegImpar(a:arbol; var x:integer);
+    var
+        y:integer;
+    begin
+        y:=0;
+        if(a<>nil)then 
+        begin
+            y:=a^.dato.legajo;
+            if(y mod 2 = 1)then
+                x:=x+1;
+            CantLegImpar(a^.hi,x);
+            CantLegImpar(a^.hd,x);
+        end;
+    end;
+    
+    procedure MayorDni(a:arbol; var x:integer);
+    begin
+        if(a<>nil)then
+        begin
+            if(a^.dato.dni>x)then
+                x:=a^.dato.dni;
+            MayorDni(a^.hi,x);
+            MayorDni(a^.hd,x);
+        end;
+    end;
+    
+    procedure promedio(l:ListaNota; var p:real);
+    var
+        c:integer;
+        prom:integer;
+    begin
+        prom:=0;
+        c:=0;
+        while(l<>nil)do begin
+            c:=c+1;
+            prom:=prom+l^.dato.nota;
+            l:=l^.sig;
+        end;
+        if(c<>0)then
+            p:=prom/c;
+    end;
+    
+    procedure MejorP(a:arbol; var r:RegProm);
+    var
+        p:real;
+    begin
+        p:=0;
+        if(a<>nil)then
+        begin
+            promedio(a^.notas,p);
+            if(r.promedio>p)then
+            begin
+                r.legajo:=a^.dato.legajo;
+                r.promedio:=p;
+            end;
+            MejorP(a^.hi,r);
+            MejorP(a^.hd,r);
+        end;
+    end;
+    
+    procedure LegajoInf(a:arbol; x:integer; var l:ListaAno);
+    var
+        aux:ListaAno;
+    begin
+        aux:=nil;
+        if(a<>nil)then
+        begin
+            if(a^.dato.legajo<x)then
+            begin
+                new(aux);
+                aux^.dato.dni:=a^.dato.dni;
+                aux^.dato.ano:=a^.dato.anoing;
+                aux^.sig:=l;
+                l:=aux;
+                LegajoInf(a^.hi,x,l);
+                LegajoInf(a^.hd,x,l);
+            end
+            else
+                LegajoInf(a^.hi,x,l);
+        end;
+    end;
+    
+    procedure ListaProm(a:arbol; x:real; var l:ListaP);
+    var
+        p:real;
+        aux:ListaP;
+    begin
+        p:=0;
+        aux:=nil;
+        if(a<>nil)then
+        begin
+            promedio(a^.notas,p);
+            if(p>x)then
+            begin
+                new(aux);
+                aux^.dato.legajo:=a^.dato.legajo;
+                aux^.dato.promedio:=p;
+                aux^.sig:=l;
+                l:=aux;
+            end;
+            ListaProm(a^.hi,x,l);
+            ListaProm(a^.hd,x,l);
+        end;
+    end;
+    
+var
+    a:arbol;
+    impar:integer;
+    Mdni:integer;
+    r:RegProm;
+    LAno:ListaAno;
+    LP:ListaP;
+    x:integer;
+    y:real;
+begin
+    impar:=0;
+    a:=nil;
+    Mdni:=0;
+    LAno:=nil;
+    LP:=nil;
+    CargarA(a);
+    if(a<>nil)then
+        Writeln('El mayor legajo es: ',MaxLegajo(a));
+    CantLegImpar(a,impar);
+    Writeln('Hay un total de dni impar de: ',impar);
+    MayorDni(a,Mdni);
+    Writeln('El mayor dni es: ',Mdni);
+    r.promedio:=0;
+    MejorP(a,r);
+    Writeln('El mejor promedio el pertenece a: ',r.legajo,'. con un promedio de: ',r.promedio);
+    Writeln('Ingresar un legajo:');
+    readln(x);
+    LegajoInf(a,x,LAno);
+    Writeln('Ingresar un promedio:');
+    readln(y);
+    ListaProm(a,y,LP);
+end.

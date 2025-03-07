@@ -1,0 +1,93 @@
+programa ejem5   
+procesos   
+  proceso tomarp(ES papel:boolean)  
+  comenzar  
+    si(HayPapelEnLaEsquina)  
+      tomarPapel  
+    sino  
+      papel:=F  
+  fin  
+  proceso dejarp  
+  comenzar  
+    si(HayPapelEnLaBolsa)  
+      depositarPapel  
+  fin  
+areas  
+  area1: AreaP(4,1,4,100)  
+  area2: AreaP(6,1,6,100)  
+  area3: AreaP(8,1,8,100)  
+  area4: AreaP(10,1,10,100)  
+  areaJ: AreaP(1,1,1,1)  
+  areaComp: AreaPC(11,11,11,11)   
+robots  
+  robot robotJ  
+  variables  
+    nombre:numero  
+    mayor:numero  
+    ganador:numero  
+    recorrido:numero  
+  comenzar  
+    mayor:=0  
+    EnviarMensaje(1,robot1)  
+    EnviarMensaje(2,robot2)  
+    EnviarMensaje(3,robot3)  
+    EnviarMensaje(4,robot4)  
+    repetir 4  
+      RecibirMensaje(nombre,*)  
+      si(nombre=1)  
+        RecibirMensaje(recorrido,robot1)    
+      si(nombre=2)  
+        RecibirMensaje(recorrido,robot2)    
+      si(nombre=3)  
+        RecibirMensaje(recorrido,robot3)  
+      si(nombre=4)  
+        RecibirMensaje(recorrido,robot4)  
+      si(recorrido>mayor)   
+        mayor:=recorrido  
+        ganador:=nombre 
+    Informar(ganador) 
+  fin  
+  robot rebotiti  
+  variables  
+    nombre:numero  
+    papel:boolean  
+    AVact:numero  
+    CAact:numero  
+  comenzar  
+    papel:=V  
+    RecibirMensaje(nombre,robotJF) 
+    mientras((PosCa<100)&(papel=V))  
+      AVact:=PosAv   
+      CAact:=PosCa 
+      BloquearEsquina(11,11)  
+      Pos(11,11)   
+      tomarp(papel)   
+      Pos(AVact,CAact)   
+      LiberarEsquina(11,11)   
+      dejarp   
+      mover   
+    EnviarMensaje(nombre,robotJF)  
+    EnviarMensaje(CAact,robotJF) 
+  fin  
+variables  
+  robot1:rebotiti  
+  robot2:rebotiti   
+  robot3:rebotiti   
+  robot4:rebotiti  
+  robotJF:robotJ  
+comenzar  
+  AsignarArea(robot1,area1)  
+  AsignarArea(robot1,areaComp)  
+  AsignarArea(robot2,area2)  
+  AsignarArea(robot2,areaComp)  
+  AsignarArea(robot3,area3)   
+  AsignarArea(robot3,areaComp)  
+  AsignarArea(robot4,area4)  
+  AsignarArea(robot4,areaComp)  
+  AsignarArea(robotJF,areaJ)  
+  Iniciar(robot1,4,1)  
+  Iniciar(robot2,6,1)  
+  Iniciar(robot3,8,1)  
+  Iniciar(robot4,10,1)  
+  Iniciar(robotJF,1,1)  
+fin

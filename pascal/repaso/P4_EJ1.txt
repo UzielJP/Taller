@@ -1,0 +1,163 @@
+program Hello;
+type
+    venta=record
+        cod:integer;
+        codp:integer;
+        cantv:integer;
+        PXU:real;
+    end;
+    
+    producto=record
+        codp:integer;
+        cantv:integer;
+        MontoT:real;
+    end;
+    
+    arbol=^nodoA;
+    
+    nodoA=record
+        dato:producto;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure LeerA(var r:venta);
+    begin
+        writeln ('Ingresar codigo venta');
+        readln(r.cod);
+        if(r.cod<>-1)then begin
+            writeln ('Ingresar codigo producto');
+            readln(r.codp);
+            writeln ('Ingresar cantidad vendido');
+            readln(r.cantv);
+            writeln ('Ingresar precio x unidad');
+            readln(r.PXU);
+        end;
+    end;
+    
+    procedure CrearA(var a:arbol; r:venta);
+    begin
+        if(a<>nil)then begin
+            
+            if(r.codp=a^.dato.codp)then begin
+                a^.dato.cantv:=a^.dato.cantv+r.cantv;
+                a^.dato.MontoT:=a^.dato.MontoT+(r.cantv*r.PXU);
+            end
+            else begin
+                
+                if(r.codp<a^.dato.codp)then
+                    CrearA(a^.hi,r)
+                else
+                    CrearA(a^.hd,r);
+            end;
+        end
+        else begin
+            new(a);
+            a^.dato.codp:=r.codp;
+            a^.dato.cantv:=r.cantv;
+            a^.dato.MontoT:=r.cantv*r.PXU;
+        end;
+    end;
+    
+    procedure CargarA(var a:arbol);
+    var
+        r:venta;
+    begin
+        LeerA(r);
+        while(r.cod<>-1)do begin
+            CrearA(a,r);
+            LeerA(r);
+        end;
+    end;
+    
+    procedure MenorQue(a:arbol; x:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.codp<x)then begin
+                cant:=cant+1;
+                MenorQue(a^.hi,x,cant);
+                MenorQue(a^.hd,x,cant);
+            end
+            else
+                MenorQue(a^.hi,x,cant);
+        end;
+    end;
+    
+    procedure Informar(a:arbol);
+    begin
+        if(a<>nil)then begin
+            Informar(a^.hi);
+            writeln(a^.dato.codp);
+            Informar(a^.hd);
+        end;
+    end;
+    
+    procedure MayorP(a:arbol; var x:integer; var codp:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.cantv>x)then begin
+                x:=a^.dato.cantv;
+                codp:=a^.dato.codp;
+            end;
+            MayorP(a^.hi,x,codp);
+            MayorP(a^.hd,x,codp);
+        end;
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango(a:arbol; n1:integer; n2:integer; var MontoT:real);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.codp>n1)then begin
+                if(a^.dato.codp<n2)then begin
+                    MontoT:=MontoT+a^.dato.MontoT;
+                    Rango(a^.hi,n1,n2,MontoT);
+                    Rango(a^.hd,n1,n2,MontoT);
+                end
+                else
+                   Rango(a^.hi,n1,n2,MontoT);
+            end
+            else
+                Rango(a^.hd,n1,n2,MontoT);
+        end;
+    end;
+var
+    a:arbol;
+    x:integer;
+    n1:integer;
+    n2:integer;
+    MontoT:real;
+    codp:integer;
+    cod:integer;
+    cant:integer;
+begin
+  x:=-1;
+  codp:=-1;
+  cant:=0;
+  MontoT:=0;
+  CargarA(a);
+  Informar(a);
+  MayorP(a,x,codp);
+  writeln('El producto con mayor cantidad de unidades vendidas es: ',codp);
+  writeln('Ingresar un codigo');
+  readln(cod);
+  MenorQue(a,cod,cant);
+  writeln('La cantidad de productos con codigos menores a: ',cod,'. Es de: ',cant);
+  writeln('Ingresar un codigo n1');
+  readln(n1);
+  writeln('Ingresar un codigo n2');
+  readln(n2);
+  change(n1,n2);
+  Rango(a,n1,n2,MontoT);
+  writeln('Monto total: ',MontoT);
+end.

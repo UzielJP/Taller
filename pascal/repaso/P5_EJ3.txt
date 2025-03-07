@@ -1,0 +1,220 @@
+program Hello;
+type
+    reg=record
+        rubro:integer;
+        codigo:integer;
+        stock:integer;
+        precio:real;
+    end;
+    
+    reg2=record
+        codigo:integer;
+        stock:integer;
+    end;
+    
+    arbol=^nodo;
+    
+    nodo=record
+        dato:reg;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    vector= array[1..10] of arbol;
+    
+    MayorV = array[1..10]of reg2;
+    
+    CantV = array[1..10] of integer;
+    
+    procedure IniciarV(var v:vector);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 10 do begin
+            v[i]:=nil;
+        end;
+    end;
+    
+    procedure IniciarVC(var v:CantV);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 10 do begin
+            v[i]:=0;
+        end;
+    end;
+    
+    procedure LeerA(var r:reg);
+    begin
+        r.codigo:=random(1000);
+        if(r.codigo<>-1)then begin
+            r.stock:=random(100);
+            r.precio:=random(100);
+        end;
+    end;
+    
+    procedure crearA(var a:arbol; r:reg);
+    begin
+        if(a<>nil)then begin
+            if(r.codigo<=a^.dato.codigo)then
+                crearA(a^.hi,r)
+            else
+                crearA(a^.hd,r);
+        end
+        else begin
+            new(a);
+            a^.dato:=r;
+            a^.hi:=nil;
+            a^.hd:=nil;
+        end;
+    end;
+    
+    procedure cargarA(var v:vector);
+    var
+        i:integer;
+        r:reg;
+        j:integer;
+    begin
+        LeerA(r);
+        while(r.codigo<>-1)do begin
+            for i:= 1 to 10 do begin
+                r.rubro:=i;
+                for j:= 1 to 10 do begin
+                    crearA(v[r.rubro],r);
+                    LeerA(r);
+                end;
+            end;
+            r.codigo:=-1;
+        end;
+    end;
+    
+    function Existe(a:arbol; x:integer):boolean;
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.codigo=x)then
+                Existe:=true
+            else begin
+                if(x<a^.dato.codigo)then
+                    Existe:=Existe(a^.hi,x)
+                else
+                    Existe:=Existe(a^.hd,x);
+            end;
+        end
+        else
+            Existe:=false;
+    end;
+    
+    procedure MayorCod(a:arbol; var r:reg2);
+    begin
+        if(a^.hd<>nil)then
+            MayorCod(a^.hd,r)
+        else begin
+            r.codigo:=a^.dato.codigo;
+            r.stock:=a^.dato.stock;
+        end;
+    end;
+    
+    procedure retornarM(v:vector; var vm:MayorV);
+    var
+        i:integer;
+        r:reg2;
+    begin
+        for i:= 1 to 10 do begin
+            if(v[i]<>nil)then begin
+                MayorCod(v[i],r);
+                vm[i]:=r;
+            end;
+        end;
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango(a:arbol; n1:integer; n2:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.codigo>n1)then begin
+                if(a^.dato.codigo<n2)then begin
+                    cant:=cant+1;
+                    Rango(a^.hi,n1,n2,cant);
+                    Rango(a^.hd,n1,n2,cant);
+                end
+                else
+                    Rango(a^.hi,n1,n2,cant);
+            end
+            else
+                Rango(a^.hd,n1,n2,cant);
+        end;
+    end;
+    
+    procedure EntreRango(v:vector; var vc:CantV; n1:integer; n2:integer);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 10 do begin
+            Rango(v[i],n1,n2,vc[i]);
+        end;
+    end;
+    
+    procedure recorrera(a:arbol);
+    begin
+        if(a<>nil)then begin
+            recorrera(a^.hi);
+            writeln('rubro: ',a^.dato.rubro);
+            writeln('codigo: ',a^.dato.codigo);
+            recorrera(a^.hd);
+        end;
+    end;
+    
+    procedure recorrer(v:vector);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 10 do begin
+            recorrera(v[i]);
+        end;
+    end;
+var
+    va:vector;
+    vc:CantV;
+    vm:MayorV;
+    x:integer;
+    rubro:integer;
+    esta:boolean;
+    n1:integer;
+    n2:integer;
+    i:integer;
+begin
+    randomize;
+    IniciarV(va);
+    IniciarVC(vc);
+    cargarA(va);
+    recorrer(va);
+    writeln('Ingresar codigo');
+    readln(x);
+    writeln('Ingresar rubro');
+    readln(rubro);
+    esta:=Existe(va[rubro],x);
+    writeln(esta);
+    retornarM(va,vm);
+    for i:=1 to 10 do begin
+        writeln('Rubro: ',i,'. Codigo: ',vm[i].codigo);
+    end;
+    writeln('Ingresar n1');
+    readln(n1);
+    writeln('Ingresar n2');
+    readln(n2);
+    change(n1,n2);
+    EntreRango(va,vc,n1,n2);
+    for i:=1 to 10 do begin
+        writeln('Cantdad de elementos mayor a: ',n1,'. Y menor a: ',n2,'. En el rubro numero: ',i,'. Es de: ',vc[i]);
+    end;
+end.

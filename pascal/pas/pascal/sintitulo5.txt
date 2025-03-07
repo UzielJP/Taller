@@ -1,0 +1,151 @@
+program uziel4;
+type
+    
+    venta=record
+        codigov:integer;
+        codigop:integer;
+        unidadesV:integer;
+        precioXU:real;
+    end;
+    
+    info=record
+        codigop:integer;
+        cantTot:integer;
+        montTot:real;
+    end;
+    
+    arbol= ^nodo;
+    
+    nodo=record
+        dato:info;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure crearA(var a:arbol; r:venta);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.codigop=r.codigop)then begin
+                    a^.dato.cantTot:=a^.dato.cantTot+r.unidadesV;
+                    a^.dato.montTot:=a^.dato.montTot+(r.unidadesV*r.precioXU);
+                end
+                else
+                    if(a^.dato.codigop>r.codigop)then
+                        crearA(a^.hi,r)
+                    else
+                        crearA(a^.hd,r);
+            end
+            else begin
+                new(a);
+                a^.dato.codigop:=r.codigop;
+                a^.dato.cantTot:=r.unidadesV;
+                a^.dato.montTot:=r.unidadesV*r.precioXU;
+            end
+        end;
+        
+    procedure cargarA(var a:arbol);
+        var
+            r:venta;
+        begin
+            writeln('codigo venta:');
+            readln(r.codigov);
+            while(r.codigov<>0)do begin
+                writeln('codigo producto:');
+                readln(r.codigop);
+                writeln('unidades vendidas:');
+                readln(r.unidadesV);
+                writeln('precio x unidad:');
+                readln(r.precioXU);
+                crearA(a,r);
+                writeln('otro codigo venta:');
+                readln(r.codigov);
+            end;
+        end;
+    
+    procedure leerA(a:arbol);
+        begin
+            if(a<>nil)then begin
+                leerA(a^.hi);
+                writeln('codigo producto: ',a^.dato.codigop);
+                leerA(a^.hd);
+            end;
+        end;
+        
+    procedure mayorC(a:arbol; var MC:integer);
+        begin
+           if(a<>nil)then begin
+                if(a^.dato.cantTot>MC)then
+                    MC:=a^.dato.cantTot;
+                mayorC(a^.hi,MC);
+                mayorC(a^.hd,MC);
+           end;
+           writeln('codigo: 1');
+        end;
+        
+    procedure menorCod(a:arbol; v:integer; var CodigoMenor:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.codigop<v)then begin
+                    CodigoMenor:=CodigoMenor+1;
+                    menorCod(a^.hi,v,CodigoMenor);
+                    menorCod(a^.hd,v,CodigoMenor);
+                end
+                else
+                    menorCod(a^.hd,v,CodigoMenor);
+            end;
+        end;
+        
+    procedure change(var LI:integer; var LS:integer);
+        var
+            aux:integer;
+        begin
+            if(LI>LS)then begin
+                aux:=LI;
+                LI:=LS;
+                LI:=aux;
+            end;
+        end;
+        
+    procedure entreRango(a:arbol; LI:integer; LS:integer; var monTotal:real);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.codigop>LI)then begin
+                    if(a^.dato.codigop<LS)then begin
+                        monTotal:=monTotal+a^.dato.cantTot;
+                        entreRango(a^.hi,LI,LS,monTotal);
+                        entreRango(a^.hd,LI,LS,monTotal);
+                    end
+                    else
+                        entreRango(a^.hi,LI,LS,monTotal);
+                end
+                else
+                    entreRango(a^.hd,LI,LS,monTotal);
+            end;
+        end;
+        
+var
+    a:arbol;
+    LI:integer;
+    LS:integer;
+    monTotal:real;
+    v:integer;
+    MC:integer;
+    CodigoMenor:integer;
+begin
+    MC:=0;
+    monTotal:=0;
+    a:=nil;
+    cargarA(a);
+    leerA(a);
+    mayorC(a,MC);
+    readln(v);
+    menorCod(a,v,CodigoMenor);
+    readln(LI);
+    readln(LS);
+    change(LI,LS);
+    entreRango(a,LI,LS,monTotal);
+    writeln('monto total: ',monTotal);
+    writeln('codigos menor a: ',v,'. es de: ',CodigoMenor);
+    writeln('Mayor codigo: ',MC);
+end.
+

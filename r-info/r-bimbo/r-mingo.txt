@@ -1,0 +1,109 @@
+programa uzielParcial1
+procesos
+  proceso juntarP(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso juntarF(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso agarrarP(ES bolsa:numero)
+  comenzar
+    mientras(PosAv<15)
+      juntarP(bolsa)
+      mover
+  fin
+  proceso agarrarF(ES bolsa:numero)
+  comenzar
+    mientras(PosAv<15)
+      juntarF(bolsa)
+      mover
+  fin
+  proceso depositarF
+  comenzar
+    mientras(PosAv<15)
+      depositarFlor
+      mover
+  fin
+  proceso depositarP
+  comenzar
+    mientras(PosAv<15)
+      depositarPapel
+      mover
+  fin
+areas
+  AreaSoloPapeles: AreaPC(5,5,15,5)
+  AreaSoloFlores:  AreaPC(5,6,15,6)
+  inicioF:  AreaP(1,1,1,1)
+  inicioP:  AreaP(2,2,2,2)
+  inicioC:  AreaP(3,3,3,3)
+robots
+  robot Rflorero
+  variables
+    bolsa:numero
+    ganador:boolean
+  comenzar
+    bolsa:=0
+    Pos(5,5)
+    derecha
+    agarrarF(bolsa)
+    EnviarMensaje(bolsa,robotC)
+    RecibirMensaje(ganador,robotC)
+    si(ganador=V)
+      Pos(5,6)
+      depositarF
+    sino
+      Pos(1,1)
+  fin
+  robot Rpapelero
+  variables
+    bolsa:numero
+    ganador:boolean
+  comenzar
+    bolsa:=0
+    Pos(5,6)
+    derecha
+    agarrarP(bolsa)
+    EnviarMensaje(bolsa,robotC)
+    RecibirMensaje(ganador,robotC)
+    si(ganador=V)
+      Pos(5,5)
+      depositarP
+    sino
+      Pos(2,2)
+  fin 
+  robot coodinador
+  variables
+    bolsaF:numero
+    bolsaP:numero
+  comenzar
+    RecibirMensaje(bolsaF,robotF)
+    RecibirMensaje(bolsaP,robotP)
+    si(bolsaF<bolsaP)
+      EnviarMensaje(V,robotP)
+      EnviarMensaje(F,robotF)
+    sino
+      EnviarMensaje(V,robotF)
+      EnviarMensaje(F,robotP)
+  fin
+variables
+  robotF:Rflorero
+  robotP:Rpapelero
+  robotC:coodinador
+comenzar
+  AsignarArea(robotF,inicioF)
+  AsignarArea(robotF,AreaSoloPapeles)
+  AsignarArea(robotF,AreaSoloFlores)
+  AsignarArea(robotP,inicioP)
+  AsignarArea(robotP,AreaSoloPapeles)
+  AsignarArea(robotP,AreaSoloFlores)
+  AsignarArea(robotC,inicioC)
+  Iniciar(robotF,1,1)
+  Iniciar(robotP,2,2)
+  Iniciar(robotC,3,3)
+fin

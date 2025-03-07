@@ -1,0 +1,122 @@
+programa EJ1_P2
+procesos
+  proceso agrarrarFlor(ES Bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      Bolsa:=Bolsa+1
+  fin
+areas
+  areap1: AreaP(1,1,1,10)
+  areap2: AreaP(2,11,2,20)
+  areap3: AreaP(3,21,3,30)
+  areap4: AreaP(4,31,4,40)
+  areap5: AreaP(5,41,5,50)
+  areap6: AreaP(6,51,6,60)
+  areaFisc: AreaP(2,1,2,1)
+robots
+  robot Recogedor
+  variables
+    Bolsa:numero
+    Id:numero
+  comenzar
+    Bolsa:=0
+    RecibirMensaje(Id,Fiscal)
+    repetir 9
+      agrarrarFlor(Bolsa)
+      mover
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(Bolsa,Fiscal)
+  fin
+  robot Servidor
+  variables
+    Id:numero
+    ganador:numero
+    Cant:numero
+    Bolsa1:numero
+    Bolsa2:numero
+    Bolsa3:numero
+    Bolsa4:numero
+    Bolsa5:numero
+    Bolsa6:numero
+  comenzar
+    EnviarMensaje(1,Robot1)
+    EnviarMensaje(2,Robot2)
+    EnviarMensaje(3,Robot3)
+    EnviarMensaje(4,Robot4)
+    EnviarMensaje(5,Robot5)
+    EnviarMensaje(6,Robot6)
+    repetir 6
+      RecibirMensaje(Id,*)
+      si(Id=1)
+        RecibirMensaje(Bolsa1,Robot1)
+        Informar(Bolsa1)
+      sino
+        si(Id=2)
+          RecibirMensaje(Bolsa2,Robot2)
+          Informar(Bolsa2)
+        sino
+          si(Id=3)
+            RecibirMensaje(Bolsa3,Robot3)
+            Informar(Bolsa3)
+          sino
+            si(Id=4)
+              RecibirMensaje(Bolsa4,Robot4)
+              Informar(Bolsa4)
+            sino
+              si(Id=5)
+                RecibirMensaje(Bolsa5,Robot5)
+                Informar(Bolsa5)
+              sino
+                RecibirMensaje(Bolsa6,Robot6)
+                Informar(Bolsa6)
+    si(Bolsa1>Bolsa2)&(Bolsa1>Bolsa3)&(Bolsa1>Bolsa4)&(Bolsa1>Bolsa5)&(Bolsa1>Bolsa6)
+      ganador:=1
+      Cant:=Bolsa1
+    sino
+      si(Bolsa2>Bolsa1)&(Bolsa2>Bolsa3)&(Bolsa2>Bolsa4)&(Bolsa2>Bolsa5)&(Bolsa2>Bolsa6)
+        ganador:=2
+        Cant:=Bolsa2
+      sino
+        si(Bolsa3>Bolsa1)&(Bolsa3>Bolsa2)&(Bolsa3>Bolsa4)&(Bolsa3>Bolsa5)&(Bolsa3>Bolsa6)
+          ganador:=3
+          Cant:=Bolsa3
+        sino
+          si(Bolsa4>Bolsa1)&(Bolsa4>Bolsa2)&(Bolsa4>Bolsa3)&(Bolsa4>Bolsa5)&(Bolsa4>Bolsa6)
+            ganador:=4
+            Cant:=Bolsa4
+          sino
+            si(Bolsa5>Bolsa1)&(Bolsa5>Bolsa2)&(Bolsa5>Bolsa3)&(Bolsa5>Bolsa4)&(Bolsa5>Bolsa6)
+              ganador:=5
+              Cant:=Bolsa5
+            sino
+              si(Bolsa6>Bolsa1)&(Bolsa6>Bolsa2)&(Bolsa6>Bolsa3)&(Bolsa6>Bolsa4)&(Bolsa6>Bolsa5)
+                ganador:=6
+                Cant:=Bolsa6
+    Informar(ganador) 
+    Informar(Cant)             
+  fin
+variables
+  Robot1:Recogedor
+  Robot2:Recogedor
+  Robot3:Recogedor
+  Robot4:Recogedor
+  Robot5:Recogedor
+  Robot6:Recogedor
+  Fiscal:Servidor
+comenzar
+  AsignarArea(Robot1,areap1)
+  AsignarArea(Robot2,areap2)
+  AsignarArea(Robot3,areap3)
+  AsignarArea(Robot4,areap4)
+  AsignarArea(Robot5,areap5)
+  AsignarArea(Robot6,areap6)
+  AsignarArea(Fiscal,areaFisc)
+  Iniciar(Robot1,1,1)
+  Iniciar(Robot2,2,11)
+  Iniciar(Robot3,3,21)
+  Iniciar(Robot4,4,31)
+  Iniciar(Robot5,5,41)
+  Iniciar(Robot6,6,51)
+  Iniciar(Fiscal,2,1)
+fin

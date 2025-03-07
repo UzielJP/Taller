@@ -1,0 +1,94 @@
+programa uziel6
+procesos
+  proceso juntarF(E papeles:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir papeles
+      BloquearEsquina(100,1)
+      Pos(100,1)
+      tomarFlor
+      Pos(av,ca)
+      LiberarEsquina(100,1)
+      depositarFlor
+  fin
+  proceso soltarF(E papeles:numero)
+  comenzar
+    repetir papeles
+      depositarFlor
+  fin
+  proceso dejarF(E papeles:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    BloquearEsquina(100,1)
+    Pos(100,1)
+    soltarF(papeles)
+    Pos(av,ca)
+    LiberarEsquina(100,1)
+  fin
+areas
+  areaComp: AreaC(100,1,100,1)
+  areap1: AreaP(10,1,10,1)
+  areap2: AreaP(11,1,11,1)
+  areap3: AreaP(12,1,12,1)
+  areaFisc: AreaP(13,1,13,1)
+robots
+  robot florero
+  variables
+    nombre:numero
+    papeles:numero
+  comenzar
+    RecibirMensaje(nombre,servidor)
+    repetir 4
+      EnviarMensaje(nombre,servidor)
+      RecibirMensaje(papeles,servidor)
+      juntarF(papeles)
+      Informar(var)
+  fin
+  robot fical
+  variables
+    papeles:numero
+    nombre:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    repetir 12
+      RecibirMensaje(nombre,*)
+      Random(papeles,1,5)
+      Informar(papeles)
+      dejarF(papeles)
+      si(nombre=1)
+        EnviarMensaje(papeles,robot1)
+      sino 
+        si(nombre=2)
+          EnviarMensaje(papeles,robot2)
+        sino
+          EnviarMensaje(papeles,robot3)
+  fin
+variables
+  robot1:florero
+  robot2:florero
+  robot3:florero
+  servidor:fical
+comenzar
+  AsignarArea(robot1,areap1)
+  AsignarArea(robot1,areaComp)
+  AsignarArea(robot2,areap2)
+  AsignarArea(robot2,areaComp)
+  AsignarArea(robot3,areap3)
+  AsignarArea(robot3,areaComp)
+  AsignarArea(servidor,areaFisc)
+  AsignarArea(servidor,areaComp)
+  Iniciar(robot1,10,1)
+  Iniciar(robot2,11,1)
+  Iniciar(robot3,12,1)
+  Iniciar(servidor,13,1)
+fin

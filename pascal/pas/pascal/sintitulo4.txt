@@ -1,0 +1,276 @@
+program uziel3;
+type
+	registroA=record
+		legajo:integer;
+		dni:integer;
+		anoIng:integer;
+	end;
+	
+	registroN=record
+		codigo:integer;
+		nota:real;
+	end;
+	
+	pl1= ^lista1;
+	
+	lista1=record
+		dni:integer;
+		anoIng:integer;
+		sig:pl1;
+	end;
+	
+	plt2= ^listat2;
+	
+	listat2=record
+		prom:real;
+		legajo:integer;
+		sig:plt2;
+	end;
+	
+	arbolA= ^alumno;
+	
+	listaN= ^notas;
+	
+	notas=record
+		reg:registroN;
+		sig:listaN;
+	end;
+	
+	alumno=record
+		reg:registroA;
+		hi:arbolA;
+		hd:arbolA;
+		notas:listaN;
+	end;
+	
+	procedure crearArb(var a:arbolA; r:registroA);
+		begin
+			if(a<>nil)then
+				begin
+					if(a^.reg.legajo>r.legajo)then
+						crearArb(a^.hi,r)
+					else
+						crearArb(a^.hd,r)
+				end
+			else
+				begin
+					new(a);
+					a^.reg:=r;
+				end
+		end;
+	
+	procedure crearL(var l:listaN; r:registroN);
+		begin
+			if(l<>nil)then
+				crearL(l^.sig,r)
+			else begin
+				new(l);
+				l^.reg:=r;
+			end
+		end;
+	
+	procedure cargarL(var l:listaN);
+		var
+			r:registroN;
+		begin
+		    writeln('codigo');
+			readln(r.codigo);
+			while(r.codigo<>-1)do begin
+			    writeln('nota');
+				readln(r.nota);
+				crearL(l,r);
+				writeln('codigo de nuevo');
+				readln(r.codigo);
+			end;
+		end;
+	
+	procedure cargarArbol(var a:arbolA);
+		var
+			r:registroA;
+		begin
+		    writeln('legajo');
+			readln(r.legajo);
+			while(r.legajo<>0)do begin
+			    writeln('dni');
+				readln(r.dni);
+			    writeln('ano ingreso');
+				readln(r.anoIng);
+				crearArb(a,r);
+			    writeln('nodo creado');
+				cargarL(a^.notas);
+				writeln('liesta creada');
+				writeln('otra vez legajo');
+				readln(r.legajo);
+			end;
+		end;
+		
+	procedure crearl1(var l:pl1; dni:integer; anoIng:integer);
+		begin
+			if(l<>nil)then
+				crearl1(l^.sig,dni,anoIng)
+			else begin
+				new(l);
+				l^.dni:=dni;
+				l^.anoIng:=anoIng;
+			end;
+		end;
+		
+	procedure crearl2(var l:plt2; prom:real; legajo:integer);
+		begin
+			if(l<>nil)then
+				crearl2(l^.sig,prom,legajo)
+			else begin
+				new(l);
+				l^.prom:=prom;
+				l^.legajo:=legajo;
+			end;
+		end;
+	
+	procedure inferiorV(var l:pl1; a:arbolA; v:integer);
+		begin
+			if(a<>nil)then begin
+			    writeln('entrando a buscar ');
+				if(a^.reg.legajo>v)then
+					inferiorV(l,a^.hi,v)
+				else begin
+				    writeln('intentado crear l');
+					crearl1(l,a^.reg.dni,a^.reg.anoIng);
+					writeln('finaizacion lista l1');
+					inferiorV(l,a^.hd,v);
+					writeln('codigo8');
+					inferiorV(l,a^.hi,v);
+					writeln('codigo9');
+				end;
+				writeln('codigo10');
+			end;
+			writeln('codigo11');
+		end;
+		
+	procedure mayorL(a:arbolA; var ML:integer);
+		begin
+			if(a<>nil)then begin
+			    writeln('codigo12');
+				if(ML<a^.reg.legajo)then
+					ML:=a^.reg.legajo;
+				mayorL(a^.hd,ML);
+				writeln('codigo13');
+			end;
+			writeln('codigo14');
+		end;
+		
+	procedure menorDni(a:arbolA; var mDni:integer);
+		begin
+			if(a<>nil)then begin
+				if(mDni<a^.reg.dni)then
+					mDni:=a^.reg.dni;
+				menorDni(a^.hi,mDni);
+				menorDni(a^.hd,mDni);
+			end;
+			writeln('codigo15');
+		end;
+		
+	procedure imparLegajo(a:arbolA; var impar:integer);
+	    var 
+	        i:integer;
+		begin
+			if(a<>nil)then begin
+			    i:=a^.reg.legajo;
+			    i:=a^.reg.legajo mod 2;
+			    writeln('i:= ',i);
+				if(i=1)then begin
+					impar:=impar+1;
+				end;
+				menorDni(a^.hi,impar);
+				menorDni(a^.hd,impar);
+			    writeln('codigo16');
+			end;
+		end;
+		
+	procedure promed(l:listaN; var prom:real);
+		var
+			cantMateria:integer;
+		begin
+		    if (l<>nil)then begin
+    			cantMateria:=0;
+    			while(l<>nil)do begin
+    				cantMateria:=cantMateria+1;
+    				prom:=prom+l^.reg.nota;
+    				l:=l^.sig;
+    			end;
+    			prom:=prom/cantMateria;
+    		end;
+		end;
+		
+	procedure mayorProm(a:arbolA; var legajomp:integer; var prom:real; prom3:real);
+		begin
+			if(a<>nil)then begin
+			    writeln('codigo20');
+				promed(a^.notas,prom3);
+				writeln('codigo21');
+				if(prom3>prom)then begin
+					prom:=prom3;
+					legajomp:=a^.reg.legajo;
+				end;
+				prom3:=0;
+				mayorProm(a^.hi,legajomp,prom,prom3);
+				writeln('codigo22');
+				mayorProm(a^.hd,legajomp,prom,prom3);
+				writeln('codigo23');
+			end;
+			writeln('codigo19');
+		end;
+		
+	procedure mayorV(var l:plt2; a:arbolA; prom:real; v:integer);
+		begin
+			if(a<>nil)then begin
+				promed(a^.notas,prom);
+				if(prom>v)then begin
+					crearl2(l,prom,a^.reg.legajo);
+				end;
+				prom:=0;
+				mayorV(l,a^.hi,prom,v);
+				mayorV(l,a^.hd,prom,v);
+			end;
+		end;
+	
+var
+	lista:pl1;
+	listat:plt2;
+	a:arbolA;
+	legajomp:integer;
+	prom2:real;
+	prom:real;
+	num:integer;
+	ML:integer;
+	mDni:integer;
+	imparLeg:integer;
+	prom3:real;
+begin
+    prom3:=0;
+    ML:=0;
+    legajomp:=0;
+	imparLeg:=0;
+	prom2:=0;
+	prom:=0;
+	a:=nil;
+	lista:=nil;
+	listat:=nil;
+	cargarArbol(a);
+	writeln('numero');
+	readln(num);
+	inferiorV(lista,a,num);
+	mayorL(a,ML);
+	menorDni(a,mDni);
+	imparLegajo(a,imparLeg);
+	mayorProm(a,legajomp,prom2,prom3);
+	writeln('numero 2');
+	readln(num);
+	mayorV(listat,a,prom,num);
+	writeln('mDni: ',mDni);
+	writeln('ML: ',ML);
+	writeln('legajomp: ',legajomp);
+	writeln('imparLeg: ',imparLeg);
+	writeln('prom2: ',prom2);
+end.
+
+

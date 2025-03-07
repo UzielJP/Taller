@@ -1,0 +1,213 @@
+program Hello;
+type
+    
+    reclamo=record
+        cod:integer;
+        dni:integer;
+        ano:integer;
+        tipor:integer;
+    end;
+    
+    PL=^nodol;
+    
+    nodol=record
+        dato:reclamo;
+        sig:PL;
+    end;
+    
+    PL2=^nodoL2;
+    
+    nodoL2=record
+        cod:integer;
+        sig:PL2;
+    end;
+    
+    arbol=^nodoa;
+    
+    nodoa=record
+        dni:integer;
+        cantot:integer;
+        lista:PL;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure agregarL(var l:PL; r:reclamo);
+    var
+        aux:PL;
+    begin
+        new(aux);
+        aux^.dato:=r;
+        aux^.sig:=l;
+        l:=aux;
+    end;
+    
+    procedure agregarL2(var l:PL2; x:integer);
+    var
+        aux:PL2;
+    begin
+        new(aux);
+        aux^.cod:=x;
+        aux^.sig:=l;
+        l:=aux;
+    end;
+    
+    procedure recorrerL(l:PL; var l2:PL2; x:integer);
+    begin
+        while(l<>nil)do begin
+            if(l^.dato.ano=x)then
+                agregarL2(l2,l^.dato.cod);
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure crearA(var a:arbol; r:reclamo);
+    begin
+        if(a<>nil)then begin
+            if(a^.dni=r.dni)then begin
+                a^.cantot:=a^.cantot+1;
+                agregarL(a^.lista,r);
+            end
+            else begin
+                if(r.dni<a^.dni)then 
+                    crearA(a^.hi,r)
+                else
+                    crearA(a^.hd,r);
+            end;
+        end
+        else begin
+            new(a);
+            a^.dni:=r.dni;
+            a^.cantot:=1;
+            a^.hi:=nil;
+            a^.hd:=nil;
+            a^.lista:=nil;
+            agregarL(a^.lista,r);
+        end;
+    end;
+    
+    procedure LeerA(var r:reclamo);
+    begin
+        r.cod:=random(1000);
+        if(r.cod<>-1)then begin
+            r.dni:=random(10);
+            r.ano:=random(2);
+            r.tipor:=random(100);
+        end;
+    end;
+    
+    procedure cargarA(var a:arbol);
+    var
+        r:reclamo;
+        i:integer;
+    begin
+        LeerA(r);
+        while(r.cod<>-1)do begin
+            for i:= 1 to 100 do begin
+                crearA(a,r);
+                LeerA(r);
+            end;
+            r.cod:=-1;
+        end;
+    end;
+    
+    function TotalR(a:arbol;x:integer):integer;
+    begin
+        if(a<>nil)then begin
+            if(x=a^.dni)then
+                TotalR:=a^.cantot
+            else begin
+                if(x<a^.dni)then
+                    TotalR:=TotalR(a^.hi,x)
+                else
+                    TotalR:=TotalR(a^.hd,x);
+            end;
+        end
+        else
+            TotalR:=0;
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango(a:arbol; n1:integer; n2:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dni>=n1)then begin
+                if(a^.dni<=n2)then begin
+                    cant:=cant+a^.cantot;
+                    Rango(a^.hi,n1,n2,cant);
+                    Rango(a^.hd,n1,n2,cant);
+                end
+                else
+                    Rango(a^.hi,n1,n2,cant);
+            end
+            else
+                Rango(a^.hd,n1,n2,cant);
+        end;
+    end;
+    
+    procedure retornarAno(a:arbol; var l2:PL2; x:integer);
+    begin
+        if(a<>nil)then begin
+            recorrerL(a^.lista,l2,x);
+            retornarAno(a^.hi,l2,x);
+            retornarAno(a^.hd,l2,x);
+        end;
+    end;
+    
+    procedure recor(l:PL2);
+    begin
+        while(l<>nil)do begin
+            writeln('Codigo: ',l^.cod);
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure InformarA(a:arbol);
+    begin
+        if(a<>nil)then begin
+            InformarA(a^.hi);
+            writeln('Dni:',a^.dni,'. Posee una cantidad de reclamos de: ',a^.cantot);
+            InformarA(a^.hd);
+        end;
+    end;
+var
+    a:arbol;
+    l2:PL2;
+    cant:integer;
+    total:integer;
+    n1:integer;
+    n2:integer;
+    x:integer;
+begin
+    randomize;
+    a:=nil;
+    l2:=nil;
+    cant:=0;
+    cargarA(a);
+    InformarA(a);
+    writeln('ingresar dni a buscar');
+    readln(x);
+    total:=TotalR(a,x);
+    writeln('Cantidad de reclamos del dni: ',x,'. Es de: ',total);
+    writeln('ingresar dni n1');
+    readln(n1);
+    writeln('ingresar dni n2');
+    readln(n2);
+    change(n1,n2);
+    Rango(a,n1,n2,cant);
+    writeln('La cantidad total de reclamos entre: ',n1,' y ',n2,'. Es de: ',cant);
+    writeln('Ingresar año');
+    readln(x);
+    retornarAno(a,l2,x);
+    recor(l2);
+end.

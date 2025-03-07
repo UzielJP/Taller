@@ -1,0 +1,133 @@
+programa uziel2
+procesos
+  proceso juntarF(ES bolsa:numero)
+  comenzar
+    repetir 10
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        bolsa:=bolsa+1
+      mover
+  fin
+  proceso juntarF2(ES bolsa:numero)
+  comenzar
+    repetir 9
+      mientras(HayFlorEnLaEsquina)
+        tomarFlor
+        bolsa:=bolsa+1
+      mover
+  fin
+  proceso soltarF(ES bolsa:numero)
+  comenzar
+    repetir bolsa
+      depositarFlor
+      bolsa:=bolsa-1
+  fin
+  proceso dejarF(ES bolsa:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    soltarF(bolsa)
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+  proceso buscarF(ES bolsa:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+areas
+  areaP1: AreaP(1,1,100,1)
+  areaP2: AreaP(1,2,100,2)
+  areaP3: AreaP(1,3,100,3)
+  AreaFisc: AreaP(1,4,1,4)
+  AreaComp: AreaPC(50,50,50,50)
+robots
+  robot recolector
+  variables
+    bolsa:numero
+    nombre:numero
+    codigo:numero
+  comenzar
+    RecibirMensaje(nombre,fiscal)
+    bolsa:=0
+    derecha
+    juntarF2(bolsa)
+    dejarF(bolsa)
+    si(nombre=1)
+      EnviarMensaje(nombre,robot2)
+      EnviarMensaje(nombre,robot3)
+    sino
+      si(nombre=2)
+        EnviarMensaje(nombre,robot1)
+        EnviarMensaje(nombre,robot3)
+      sino
+        EnviarMensaje(nombre,robot1)
+        EnviarMensaje(nombre,robot2)
+    repetir 2
+      RecibirMensaje(codigo,*)
+    repetir 9
+      juntarF(bolsa)
+      dejarF(bolsa)
+      Informar(bolsa)
+      si(nombre=1)
+        EnviarMensaje(nombre,robot2)
+        EnviarMensaje(nombre,robot3)
+      sino
+        si(nombre=2)
+          EnviarMensaje(nombre,robot1)
+          EnviarMensaje(nombre,robot3)
+        sino
+          EnviarMensaje(nombre,robot1)
+          EnviarMensaje(nombre,robot2)
+      repetir 2
+        RecibirMensaje(codigo,*)
+    EnviarMensaje(nombre,fiscal)
+  fin
+  robot fical
+  variables
+    codigo:numero
+    bolsa:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    bolsa:=0
+    repetir 3
+      RecibirMensaje(codigo,*)
+    buscarF(bolsa)
+    Informar(bolsa)
+  fin
+variables
+  robot1:recolector
+  robot2:recolector
+  robot3:recolector
+  fiscal:fical
+comenzar
+  AsignarArea(robot1,areaP1)
+  AsignarArea(robot1,AreaComp)
+  AsignarArea(robot2,areaP2)
+  AsignarArea(robot2,AreaComp)
+  AsignarArea(robot3,areaP3)
+  AsignarArea(robot3,AreaComp)
+  AsignarArea(fiscal,AreaFisc)
+  AsignarArea(fiscal,AreaComp)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,1,2)
+  Iniciar(robot3,1,3)
+  Iniciar(fiscal,1,4)
+fin

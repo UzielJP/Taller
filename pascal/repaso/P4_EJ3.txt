@@ -1,0 +1,240 @@
+program Hello;
+type
+    
+    VecNota= array[1..30] of integer;
+    
+    RegAlum=record
+        CodA:integer;
+        notas:VecNota;
+    end;
+    
+    arbol=^NodoA;
+    
+    NodoA=record
+        dato:RegAlum;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    Final=record
+        CodA:integer;
+        Nota:integer;
+    end;
+    
+    ListaF=^NodoLf;
+    
+    NodoLf=record
+        dato:Final;
+        sig:ListaF;
+    end;
+    
+    RegProm=record
+        CodA:integer;
+        Prom:integer;
+    end;
+    
+    ListaP=^NodoProm;
+    
+    NodoProm=record
+        dato:RegProm;
+        sig:ListaP;
+    end;
+    
+    VecLista= array[1..30]of ListaF; 
+    
+    procedure IniciarVN(var v:VecNota);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 30 do
+            v[i]:=-1;
+    end;
+    
+    procedure IniciarVL(var v:VecLista);
+    var
+        i:integer;
+    begin
+        for i:= 1 to 30 do
+            v[i]:=nil;
+    end;
+    
+    procedure agregarLF(var L:ListaF; CodA:integer; Nota:integer);
+    var
+        aux:ListaF;
+    begin
+        new(aux);
+        aux^.dato.CodA:=CodA;
+        aux^.dato.Nota:=Nota;
+        aux^.sig:=L;
+        L:=aux;
+    end;
+    
+    procedure agregarLP(var L:ListaP; P:integer; CodA:integer);
+    var
+        aux:ListaP;
+    begin
+        new(aux);
+        aux^.dato.CodA:=CodA;
+        aux^.dato.Prom:=P;
+        aux^.sig:=L;
+        L:=aux;
+    end;
+    
+    function Promedio(v:VecNota):integer;
+    var
+        cant:integer;
+        i:integer;
+        prom:integer;
+    begin
+        cant:=0;
+        prom:=0;
+        
+        for i:= 1 to 30 do begin
+            if(v[i]>-1)then begin
+                cant:=cant+1;
+                prom:=prom+v[i];
+            end;
+        end;
+        
+        Promedio:=prom div cant;
+    end;
+    
+    procedure CrearA(var a:arbol; CodF:integer; CodA:integer; Nota:integer);
+    begin
+        if(a<>nil)then begin
+            if(CodA=a^.dato.CodA)then begin
+                if(nota>=4)then
+                    a^.dato.notas[CodF]:=Nota;
+            end
+            else begin
+                if(CodA<a^.dato.CodA)then
+                    CrearA(a^.hi,CodF,CodA,Nota)
+                else
+                    CrearA(a^.hd,CodF,CodA,Nota);
+            end;
+        end
+        else begin
+            new(a);
+            a^.dato.CodA:=CodA;
+            IniciarVN(a^.dato.notas);
+            if(nota>=4)then
+                a^.dato.notas[CodF]:=nota
+        end;
+    end;
+    
+    procedure CargarTotal(var a:arbol; var v:VecLista);
+    var
+        CodF:integer;
+        CodA:integer;
+        Nota:integer;
+    begin
+        writeln('ingresar nota');
+        readln(Nota);
+        while(Nota<>-1)do begin
+            writeln('ingresar codigo materia (1=<x<=30)');
+            readln(CodF);
+            writeln('ingresar codigo alumno');
+            readln(CodA);
+            CrearA(a,CodF,CodA,Nota);
+            agregarLF(v[CodF],CodA,Nota);
+            writeln('ingresar nota');
+            readln(Nota);
+        end;
+    end;
+    
+    function recorrer(v:VecNota):integer;
+    var
+        cant:integer;
+        i:integer;
+    begin
+        cant:=0;
+        for i:= 1 to 30 do begin
+            if(v[i]>-1)then
+                cant:=cant+1;
+        end;
+        recorrer:=cant;
+    end;
+    
+    procedure MayorProm(a:arbol; x:integer ;var L:ListaP);
+    var
+        p:integer;
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.CodA>x)then begin
+                p:=Promedio(a^.dato.notas);
+                agregarLP(L,p,a^.dato.CodA);
+                MayorProm(a^.hi,x,L);
+                MayorProm(a^.hd,x,L);
+            end
+            else
+                MayorProm(a^.hd,x,L);
+        end;
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango(a:arbol; n1:integer; n2:integer; x:integer; var cant:integer);
+    var
+        c:integer;
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.CodA>=n1)then begin
+                if(a^.dato.CodA<=n2)then begin
+                    c:=recorrer(a^.dato.notas);
+                    if(c=x)then
+                        cant:=cant+1;
+                    Rango(a^.hi,n1,n2,x,cant);
+                    Rango(a^.hd,n1,n2,x,cant);
+                end
+                else
+                    Rango(a^.hi,n1,n2,x,cant);
+            end
+            else
+                Rango(a^.hd,n1,n2,x,cant);
+        end;
+    end;
+    
+    procedure recorrerL(L:ListaP);
+    begin
+        while(L<>nil)do begin
+            writeln('Nombre: ',L^.dato.CodA,'. Promedio: ',L^.dato.Prom);
+            L:=L^.sig;
+        end;
+    end;
+var
+    LP:ListaP;
+    a:arbol;
+    x:integer;
+    V:VecLista;
+    cant:integer;
+    n1:integer;
+    n2:integer;
+begin
+    cant:=0;
+    LP:=nil;
+    a:=nil;
+    IniciarVL(V);
+    CargarTotal(a,V);
+    writeln('Codigo pequeño alumno');
+    readln(x);
+    MayorProm(a,x,LP);
+    recorrerL(LP);
+    writeln('Ingresar n1');
+    readln(n1);
+    writeln('Ingresar n2');
+    readln(n2);
+    change(n1,n2);
+    writeln('Ingresar numero de parciales aprobados');
+    readln(x);
+    Rango(a,n1,n2,x,cant);
+    writeln(cant);
+end.

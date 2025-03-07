@@ -1,0 +1,101 @@
+programa ejem523
+procesos
+  proceso recogerFJ(ES bolsa:numero)
+  comenzar
+    Pos(50,50)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso recogerF
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso recorrerF
+  comenzar
+    repetir 10
+      recogerF
+      mover
+  fin
+  proceso depositarF
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso dejarFlores(E av:numero E ca:numero)
+  comenzar
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    depositarF
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+areas
+  area1: AreaP(1,1,100,1)
+  area2: AreaP(1,2,100,2)
+  area3: AreaP(1,3,100,3)
+  area4: AreaP(1,4,100,4)
+  areac: AreaC(50,50,50,50)
+robots
+  robot robocop 
+  variables 
+    av:numero
+    ca:numero
+    nombre:numero
+    codigo:numero
+  comenzar
+    RecibirMensaje(nombre,roboF)
+    derecha
+    repetir 9
+      recorrerF
+      av:=PosAv
+      ca:=PosCa
+      dejarFlores(av,ca)
+      si(nombre=1)
+        EnviarMensaje(1,robot2)
+        EnviarMensaje(1,robot3)
+      sino
+        si(nombre=2)
+          EnviarMensaje(1,robot1)
+          EnviarMensaje(1,robot3)
+        sino
+          EnviarMensaje(1,robot1)
+          EnviarMensaje(1,robot2)
+      repetir 2
+        RecibirMensaje(codigo,*)
+    EnviarMensaje(codigo,roboF)
+  fin
+  robot Fiscal
+  variables
+    bolsa:numero
+    codigo:numero
+  comenzar
+    bolsa:=0
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    repetir 3
+      RecibirMensaje(codigo,*)
+    recogerFJ(bolsa)
+    Informar(bolsa)
+  fin
+variables
+  robot1:robocop
+  robot2:robocop
+  robot3:robocop
+  roboF:Fiscal
+comenzar
+  AsignarArea(robot1,area1)
+  AsignarArea(robot1,areac)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot2,areac)
+  AsignarArea(robot3,area3)
+  AsignarArea(robot3,areac)
+  AsignarArea(roboF,area4)
+  AsignarArea(roboF,areac)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,1,2)
+  Iniciar(robot3,1,3)
+  Iniciar(roboF,1,4)
+fin

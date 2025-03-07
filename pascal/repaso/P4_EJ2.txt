@@ -1,0 +1,318 @@
+program Hello;
+type
+    libro=record
+        isbn:integer;
+        nums:integer;
+        DyM:string;
+        cantp:integer;
+    end;
+    
+    arbol1=^nodoA1;
+    
+    nodoA1=record
+        dato:libro;
+        hi:arbol1;
+        hd:arbol1;
+    end;
+    
+    PuntLA=^nodoLA;
+    
+    nodoLA=record
+        dato:libro;
+        sig:PuntLA;
+    end;
+    
+    arbol2=^nodoA2;
+    
+    nodoA2=record
+        lista:PuntLA;
+        hi:arbol2;
+        hd:arbol2;
+    end;
+    
+    PuntLT=^nodoLT;
+    
+    nodoLT=record
+        isbn:integer;
+        cantot:integer;
+        sig:PuntLT;
+    end;
+    
+    procedure LeerA(var r:libro);
+    begin
+        writeln('Ingresar isbn (>-1)');
+        readln(r.isbn);
+        if(r.isbn<>-1)then begin
+            writeln('Ingresar numero de socio');
+            readln(r.nums);
+            writeln('Ingresar dia y mes de prestacion');
+            readln(r.DyM);
+            writeln('Ingresar cantidad de dias prestado');
+            readln(r.cantp);
+        end;
+    end;
+    
+    procedure agregarAtr(var l:PuntLA; r:libro);
+    var
+        aux:PuntLA;
+    begin
+        new(aux);
+        aux^.dato:=r;
+        aux^.sig:=l;
+        l:=aux;
+    end;
+    
+    procedure crearA2(var a:arbol2; r:libro);
+    begin
+        if(a<>nil)then begin
+            if(r.isbn=a^.lista^.dato.isbn)then
+                agregarAtr(a^.lista,r)
+            else begin
+                if(r.isbn<a^.lista^.dato.isbn)then
+                    crearA2(a^.hi,r)
+                else
+                    crearA2(a^.hd,r);
+            end;
+        end
+        else begin
+            new(a);
+            a^.hi:=nil;
+            a^.hd:=nil;
+            agregarAtr(a^.lista,r);
+        end;
+    end;
+    
+    function cantprest(l:PuntLA):integer;
+    var
+        cant:integer;
+    begin
+        cant:=0;
+        while(l<>nil)do begin
+            cant:=cant+1;
+            l:=l^.sig;
+        end;
+        cantprest:=cant;
+    end;
+    
+    procedure insertarOrd(var l:PuntLT; cant:integer; x:integer);
+    var
+        ant:PuntLT;
+        act:PuntLT;
+        aux:PuntLT;
+    begin
+        ant:=l;
+        act:=l;
+        while(act<>nil)and(x>act^.isbn)do begin
+            ant:=act;
+            act:=act^.sig;
+        end;
+        
+        if(act<>nil)then begin
+            if(act^.Isbn=x)then
+                act^.cantot:=act^.cantot+1
+            else
+                new(aux);
+                aux^.cantot:=cant;
+                aux^.isbn:=x;
+                ant^.sig:=aux;
+                aux^.sig:=act;
+        end
+        else begin
+                new(aux);
+                aux^.cantot:=cant;
+                aux^.isbn:=x;
+                ant^.sig:=aux;
+                aux^.sig:=act;
+        end;
+    end;
+    
+    procedure TotalPrest2(a:arbol2; var l:PuntLT; var p:integer);
+    begin
+        if(a<>nil)then begin
+            p:=cantprest(a^.lista);
+            insertarOrd(l,p,a^.lista^.dato.isbn);
+            TotalPrest2(a^.hi,l,p);
+            TotalPrest2(a^.hd,l,p);
+        end;
+    end;
+    
+    procedure crearA1(var a:arbol1; var r:libro);
+    begin
+        if(a<>nil)then begin
+            if(r.isbn<=a^.dato.isbn)then
+                crearA1(a^.hi,r)
+            else
+                crearA1(a^.hd,r);
+        end
+        else begin
+            new(a);
+            a^.dato:=r;
+            a^.hi:=nil;
+            a^.hd:=nil;
+        end;
+    end;
+    
+    procedure TotalPrest1(a:arbol1; var l:PuntLT);
+    begin
+        if(a<>nil)then begin
+            insertarOrd(l,1,a^.dato.isbn);
+            TotalPrest1(a^.hi,l);
+            TotalPrest1(a^.hd,l);
+        end;
+    end;
+    
+    procedure CargarA(var a1:arbol1; var a2:arbol2);
+    var
+        r:libro;
+    begin
+        LeerA(r);
+        while(r.isbn<>-1)do begin
+            crearA1(a1,r);
+            crearA2(a2,r);
+            LeerA(r);
+        end;
+    end;
+    
+    function MayorIsbn(a:arbol1):integer;
+    begin
+        if(a^.hd<>nil)then
+            MayorIsbn:=MayorIsbn(a^.hd)
+        else
+            MayorIsbn:=a^.dato.isbn;
+    end;
+    
+    function MenorIsbn(a:arbol2):integer;
+    begin
+        if(a^.hi<>nil)then
+            MenorIsbn:=MenorIsbn(a^.hi)
+        else
+            MenorIsbn:=a^.lista^.dato.isbn;
+    end;
+    
+    procedure CantPrest(l:PuntLA; var cant:integer);
+    begin
+        while(l<>nil)do begin
+            cant:=cant+1;
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure CantPSocio1(a:arbol1; x:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(x=a^.dato.nums)then
+                cant:=cant+1;
+            CantPSocio1(a^.hi,x,cant);
+            CantPSocio1(a^.hd,x,cant);
+        end;
+    end;
+    
+    procedure CantPSocio2(a:arbol2; x:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(x=a^.lista^.dato.nums)then
+                CantPrest(a^.lista,cant);
+            CantPSocio2(a^.hi,x,cant);
+            CantPSocio2(a^.hd,x,cant);
+        end;
+    end;
+    
+    procedure Informar(l:PuntLT);
+    begin
+        while(l<>nil)do begin
+            writeln('Isbn: ',l^.Isbn,'. Cantidad de veces prestado: ',l^.cantot);
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure change(var n1:integer; var n2:integer);
+    var
+        aux:integer;
+    begin
+        if(n1>n2)then begin
+            aux:=n1;
+            n1:=n2;
+            n2:=aux;
+        end;
+    end;
+    
+    procedure Rango2(a:arbol2; n1:integer; n2:integer; cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.lista^.dato.Isbn>=n1)then begin
+                if(a^.lista^.dato.Isbn<=n2)then begin
+                    cant:=cantprest(a^.lista);
+                    Rango2(a^.hi,n1,n2,cant);
+                    Rango2(a^.hd,n1,n2,cant);
+                end
+                else
+                    Rango2(a^.hi,n1,n2,cant);
+            end
+            else
+                Rango2(a^.hd,n1,n2,cant);
+        end;
+    end;
+    
+    procedure Rango1(a:arbol1; n1:integer; n2:integer; cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.Isbn>=n1)then begin
+                if(a^.dato.Isbn<=n2)then begin
+                    cant:=cant+1;
+                    Rango1(a^.hi,n1,n2,cant);
+                    Rango1(a^.hd,n1,n2,cant);
+                end
+                else
+                    Rango1(a^.hi,n1,n2,cant);
+            end
+            else
+                Rango1(a^.hd,n1,n2,cant);
+        end;
+    end;
+var
+    a1:arbol1;
+    a2:arbol2;
+    l1:PuntLT;
+    l2:PuntLT;
+    cant1:integer;
+    cant2:integer;
+    n1:integer;
+    n2:integer;
+    CantPS1:integer;
+    CantPS2:integer;
+    cod:integer;
+    MaxIsbn:integer;
+    MinIsbn:integer;
+    p:integer;
+begin
+    a1:=nil;
+    a2:=nil;
+    l1:=nil;
+    l2:=nil;
+    cant1:=0;
+    cant2:=0;
+    CantPS1:=0;
+    CantPS2:=0;
+    CargarA(a1,a2);
+    MaxIsbn:=MayorIsbn(a1);
+    writeln('mayor isbn: ',MaxIsbn);
+    MinIsbn:=MenorIsbn(a2);
+    writeln('menor isbn: ',MinIsbn);
+    writeln('ingresar codigo a buscar');
+    readln(cod);
+    CantPSocio1(a1,cod,CantPS1);
+    writeln('Cantidad: ',CantPS1);
+    CantPSocio2(a2,cod,CantPS2);
+    writeln('Cantidad: ',CantPS2);
+    TotalPrest1(a1,l1);
+    TotalPrest2(a2,l2,p);
+    writeln('Ingresar n1:');
+    readln(n1);
+    writeln('Ingresar n2:');
+    readln(n2);
+    change(n1,n2);
+    Rango1(a1,n1,n2,cant1);
+    writeln('cant 1: ',cant1);
+    Rango2(a2,n1,n2,cant2);
+    writeln('cant 2: ',cant2);
+end.

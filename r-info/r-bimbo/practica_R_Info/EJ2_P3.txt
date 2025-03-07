@@ -1,0 +1,145 @@
+programa EJ2_P4
+procesos
+  proceso agarrarPapel(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso agarrarFlor(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso recorrer(E escalon:numero)
+  comenzar
+    repetir escalon
+      mover
+  fin
+  proceso izquierda
+  comenzar
+    repetir 3
+      derecha
+  fin
+areas
+  areac: AreaC(1,1,100,100)
+robots
+  robot Florero
+  variables
+    escalon:numero
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    escalon:= 5
+    recorrer(escalon)
+    agarrarFlor(bolsa)
+    derecha
+    recorrer(escalon)
+    agarrarFlor(bolsa)
+    izquierda
+    repetir 3
+      escalon:= escalon-1
+      recorrer(escalon)
+      agarrarFlor(bolsa)
+      derecha
+      recorrer(escalon)
+      agarrarFlor(bolsa)
+      izquierda  
+    mover
+    derecha
+    BloquearEsquina(15,15)
+    mover
+    agarrarFlor(bolsa)
+    EnviarMensaje(1,Fiscal)
+    derecha
+    derecha
+    mover
+    LiberarEsquina(15,15)
+    recorrer(escalon)
+    agarrarFlor(bolsa)
+    derecha
+    recorrer(escalon)
+    agarrarFlor(bolsa)
+    izquierda
+    repetir 3
+      escalon:=escalon+1
+      recorrer(escalon)
+      agarrarFlor(bolsa)
+      derecha
+      recorrer(escalon)
+      agarrarFlor(bolsa)
+      izquierda
+    EnviarMensaje(1,Fiscal)
+    Informar(bolsa)
+  fin
+  robot Papelero
+  variables
+    escalon:numero
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    escalon:= 5
+    recorrer(escalon)
+    agarrarPapel(bolsa)
+    izquierda
+    recorrer(escalon)
+    agarrarPapel(bolsa)
+    derecha
+    repetir 3
+      escalon:= escalon-1
+      recorrer(escalon)
+      agarrarPapel(bolsa)
+      izquierda
+      recorrer(escalon)
+      agarrarPapel(bolsa)
+      derecha
+    mover
+    izquierda
+    BloquearEsquina(15,15)
+    mover
+    agarrarPapel(bolsa)
+    EnviarMensaje(2,Fiscal)
+    derecha
+    derecha
+    mover
+    LiberarEsquina(15,15)
+    recorrer(escalon)
+    agarrarPapel(bolsa)
+    izquierda
+    recorrer(escalon)
+    agarrarPapel(bolsa)
+    derecha
+    repetir 3
+      escalon:=escalon+1
+      recorrer(escalon)
+      agarrarPapel(bolsa)
+      izquierda
+      recorrer(escalon)
+      agarrarPapel(bolsa)
+      derecha
+    EnviarMensaje(2,Fiscal)
+    Informar(bolsa)
+  fin
+  robot servidor
+  variables
+    ganador:numero
+    id:numero
+  comenzar
+    RecibirMensaje(ganador,*)
+    repetir 3
+      RecibirMensaje(id,*)
+    Informar(ganador)
+  fin
+variables
+  R1:Florero
+  R2:Papelero
+  Fiscal:servidor
+comenzar
+  AsignarArea(R1,areac)
+  AsignarArea(R2,areac)
+  AsignarArea(Fiscal,areac)
+  Iniciar(R1,1,1)
+  Iniciar(R2,31,1)
+  Iniciar(Fiscal,15,1)
+fin

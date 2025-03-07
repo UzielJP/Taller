@@ -1,0 +1,148 @@
+program Hello;
+type
+    venta=record
+        codp:integer;
+        fecha:integer;
+        cantv:integer;
+    end;
+    
+    producto=record
+        codp:integer;
+        cantp:integer;
+    end;
+    
+    arbol1=^nodoA1;
+    
+    arbol2=^nodoA2;
+    
+    nodoA1=record
+        dato:venta;
+        hi:arbol1;
+        hd:arbol1;
+    end;
+    
+    nodoA2=record
+        dato:producto;
+        hi:arbol2;
+        hd:arbol2;
+    end;
+    
+    procedure leera(var r:venta);
+    begin
+        Writeln('Ingresar codigo');
+        readln(r.codp);
+        if(r.codp<>0)then
+        begin
+            Writeln('Ingresar fecha');
+            readln(r.fecha);
+            Writeln('Ingresar cantidad vendidas');
+            readln(r.cantv);
+        end;
+    end;
+    
+    procedure crearA1(var a:arbol1; r:venta);
+    begin
+        if(a<>nil)then
+        begin
+            if(r.codp<=a^.dato.codp)then
+                crearA1(a^.hi,r)
+            else
+                crearA1(a^.hd,r);
+        end
+        else
+        begin
+            new(a);
+            a^.dato:=r;
+            a^.hi:=nil;
+            a^.hd:=nil;
+        end;
+    end;
+    
+    procedure crearA2(var a:arbol2; r:venta);
+    begin
+        if(a<>nil)then
+        begin
+            if(a^.dato.codp=r.codp)then
+                a^.dato.cantp:=a^.dato.cantp+r.cantv
+            else
+            begin
+                if(r.codp<a^.dato.codp)then
+                    crearA2(a^.hi,r)
+                else
+                    crearA2(a^.hd,r);
+            end;
+        end
+        else
+        begin
+            new(a);
+            a^.dato.codp:=r.codp;
+            a^.dato.cantp:=r.cantv;
+            a^.hi:=nil;
+            a^.hd:=nil;
+        end;
+    end;
+    
+    procedure cargarTotal(var a1:arbol1; var a2:arbol2);
+    var
+        r:venta;
+    begin
+        leera(r);
+        while(r.codp<>0)do
+        begin
+            crearA1(a1,r);
+            crearA2(a2,r);
+            leera(r);
+        end;
+    end;
+    
+    procedure canTotA1(a:arbol1; x:integer; var cantp:integer);
+    begin
+        if(a<>nil)then
+        begin
+            if(x=a^.dato.codp)then
+            begin
+                cantp:=cantp+a^.dato.cantv;
+                canTotA1(a^.hi,x,cantp);
+            end
+            else
+            begin
+                if(x<a^.dato.codp)then
+                    canTotA1(a^.hi,x,cantp)
+                else
+                    canTotA1(a^.hd,x,cantp);
+            end;
+        end;
+    end;
+    
+    procedure canTotA2(a:arbol2; x:integer; var cantp:integer);
+    begin
+        if(a<>nil)then
+        begin
+            if(x=a^.dato.codp)then
+                cantp:=cantp+a^.dato.cantp
+            else
+                if(x<a^.dato.codp)then
+                    canTotA2(a^.hi,x,cantp)
+                else
+                    canTotA2(a^.hd,x,cantp);
+        end;
+    end;
+var
+    a1:arbol1;
+    a2:arbol2;
+    cantTot1:integer;
+    cantTot2:integer;
+    cod:integer;
+begin
+    cantTot1:=0;
+    cantTot2:=0;
+    a1:=nil;
+    a2:=nil;
+    cargarTotal(a1,a2);
+    Writeln('Ingresar codigo a buscar');
+    readln(cod);
+    canTotA1(a1,cod,cantTot1);
+    canTotA2(a2,cod,cantTot2);
+    Writeln(cantTot1);
+    Writeln(cantTot2);
+end.

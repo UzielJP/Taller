@@ -1,0 +1,101 @@
+3)-1)
+
+programa ejem4       
+procesos            
+  proceso juntarF    
+  comenzar     
+    mientras(HayFlorEnLaEsquina)   
+      tomarFlor    
+  fin
+  proceso depositarF 
+  comenzar
+    mientras(HayFlorEnLaBolsa) 
+      depositarFlor
+  fin    
+  proceso juntarP    
+  comenzar    
+    mientras(HayPapelEnLaEsquina)    
+      tomarPapel    
+  fin   
+  proceso depositarP
+  comenzar 
+    mientras(HayPapelEnLaBolsa) 
+      depositarPapel
+  fin 
+areas      
+  areaf: AreaPC(1,1,5,10)
+  areaIF: AreaPC(6,10,7,10)
+  areap: AreaPC(6,1,10,9)
+  areaIP: AreaPC(8,10,9,10)
+  areaD: AreaC(10,10,10,10)              
+robots     
+  robot florero 
+  variables
+    calleI:numero
+    avenidaI:numero 
+    alto:numero 
+    largo:numero 
+  comenzar 
+    calleI:=PosCa
+    avenidaI:=PosAv
+    repetir 5 
+      Random(alto,1,5) 
+      Random(largo,1,10) 
+      BloquearEsquina(alto,largo)
+      Pos(alto,largo) 
+      juntarF 
+      LiberarEsquina(alto,largo) 
+      BloquearEsquina(10,10) 
+      Pos(10,10) 
+      depositarF
+      Pos(avenidaI,calleI) 
+      LiberarEsquina(10,10) 
+  fin 
+
+  robot papelero
+  variables
+    calleI:numero
+    avenidaI:numero
+    alto:numero 
+    largo:numero 
+  comenzar 
+    calleI:=PosCa
+    avenidaI:=PosAv
+    repetir 3
+      Random(alto,6,10) 
+      Random(largo,1,9) 
+      BloquearEsquina(alto,largo)
+      Pos(alto,largo) 
+      juntarP 
+      LiberarEsquina(alto,largo) 
+      BloquearEsquina(10,10) 
+      Pos(10,10) 
+      depositarP
+      Pos(avenidaI,calleI) 
+      LiberarEsquina(10,10)
+  fin 
+  
+variables            
+  F1: florero
+  F2: florero
+  P1: papelero
+  P2: papelero
+
+comenzar        
+  AsignarArea(F1,areaf)
+  AsignarArea(F1,areaD)
+  AsignarArea(F1,areaIF)
+  AsignarArea(F2,areaf)
+  AsignarArea(F2,areaD)
+  AsignarArea(F2,areaIF)
+  AsignarArea(P1,areap)
+  AsignarArea(P1,areaD)
+  AsignarArea(P1,areaIP)
+  AsignarArea(P2,areap)
+  AsignarArea(P2,areaD)
+  AsignarArea(P2,areaIP)
+  Iniciar(F1,6,10)  
+  Iniciar(F2,7,10)
+  Iniciar(P1,8,10)
+  Iniciar(P2,9,10)
+fin  

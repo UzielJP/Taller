@@ -1,0 +1,120 @@
+programa ejem44_SimonWinner
+procesos
+  proceso tomarp
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+  proceso recogerP(E av:numero E ca:numero E AntAv:numero E AntCa:numero) 
+  comenzar 
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    tomarp
+    Pos(AntAv,AntCa)
+    LiberarEsquina(av,ca)
+  fin  
+  proceso tomarf
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+  proceso recogerF(E av:numero E ca:numero E AntAv:numero E AntCa:numero)
+  comenzar 
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    tomarf
+    Pos(AntAv,AntCa)
+    LiberarEsquina(av,ca)
+  fin
+  proceso depositarF
+  comenzar
+    mientras(HayFlorEnLaBolsa)
+      depositarFlor
+  fin
+  proceso depositarP
+  comenzar
+    mientras(HayPapelEnLaBolsa)
+      depositarPapel
+  fin
+  proceso depositarbolsa(E av:numero E ca:numero E AntAv:numero E AntCa:numero)
+  comenzar
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    depositarF
+    depositarP
+    Pos(AntAv,AntCa)
+    LiberarEsquina(av,ca)
+  fin
+areas
+  area1: AreaP(1,1,1,1)
+  area2: AreaP(2,1,2,1)
+  area3: AreaP(3,1,3,1)
+  areaComp: AreaC(2,2,100,100)
+robots
+  robot Slave
+  variables
+    nombre:numero
+    codigo:numero
+    av:numero
+    ca:numero
+    AntAv:numero
+    AntCa:numero
+    cont:boolean
+  comenzar
+    RecibirMensaje(nombre,master)
+    AntAv:=PosAv
+    AntCa:=PosCa
+    cont:=V
+    mientras(cont=V)
+      RecibirMensaje(codigo,master)
+      RecibirMensaje(av,master)
+      RecibirMensaje(ca,master)
+      si(codigo=1)
+        recogerF(av,ca,AntAv,AntCa)
+      sino
+        si(codigo=2) 
+          recogerP(av,ca,AntAv,AntCa)
+        sino
+          si(codigo=3)
+            depositarbolsa(av,ca,AntAv,AntCa)
+          sino
+            cont:=F
+  fin
+  robot Master
+  variables
+    nombre:numero
+    av:numero
+    ca:numero
+    codigo:numero
+  comenzar
+    EnviarMensaje(1,slave1)
+    EnviarMensaje(2,slave2)
+    repetir 10
+      Random(nombre,1,2)
+      Random(codigo,1,4)
+      Random(av,2,100)
+      Random(ca,2,100)
+      si(nombre=1)
+        EnviarMensaje(codigo,slave1)
+        EnviarMensaje(av,slave1)
+        EnviarMensaje(ca,slave1)
+      sino
+        EnviarMensaje(codigo,slave2)
+        EnviarMensaje(av,slave2)
+        EnviarMensaje(ca,slave2)
+  fin
+variables 
+  slave1:Slave 
+  slave2:Slave 
+  master:Master 
+comenzar 
+  AsignarArea(slave1,area2)
+  AsignarArea(slave1,areaComp)
+  AsignarArea(slave2,area3) 
+  AsignarArea(slave2,areaComp)
+  AsignarArea(master,area1)
+  AsignarArea(master,areaComp)
+  Iniciar(master,1,1)
+  Iniciar(slave1,2,1) 
+  Iniciar(slave2,3,1)
+fin

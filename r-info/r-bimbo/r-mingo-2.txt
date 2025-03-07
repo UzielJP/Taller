@@ -1,0 +1,151 @@
+programa uzielJuarezPineiro
+procesos
+  proceso agarrarF(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso recorrerF(ES bolsa:numero E rep:numero)
+  comenzar
+    repetir rep
+      agarrarF(bolsa)
+      mover
+  fin
+  proceso agarrarP(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso recorrerP(ES bolsa:numero E rep:numero)
+  comenzar
+    repetir rep
+      agarrarP(bolsa)
+      mover
+  fin
+  proceso depositarF(E bolsa:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    Pos(21,21)
+    repetir bolsa
+      depositarFlor
+      bolsa:=bolsa-1
+    Pos(av,ca)
+  fin
+  proceso depositarP(E bolsa:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    Pos(22,22)
+    repetir bolsa
+      depositarPapel
+      bolsa:=bolsa-1
+    Pos(av,ca)
+  fin
+areas
+  areaF: AreaP(1,1,20,20)
+  areaP: AreaP(21,1,40,20)
+  areaDF: AreaP(21,21,21,21)
+  areaDP: AreaP(22,22,22,22)
+  inicioC: AreaP(23,23,23,23)
+robots
+  robot florero
+  variables
+    nombre:numero
+    bolsa:numero
+    alto:numero
+    ancho:numero
+  comenzar
+    bolsa:=0
+    RecibirMensaje(nombre,robotC)
+    RecibirMensaje(alto,robotC)
+    RecibirMensaje(ancho,robotC)
+    repetir 2
+      recorrerF(bolsa,alto)
+      derecha
+      EnviarMensaje(nombre,robotC)
+      EnviarMensaje(bolsa,robotC)
+      depositarF(bolsa)
+      recorrerF(bolsa,ancho)
+      derecha
+      EnviarMensaje(nombre,robotC)
+      EnviarMensaje(bolsa,robotC)
+      depositarF(bolsa)
+  fin
+  robot papelero
+  variables
+    nombre:numero
+    bolsa:numero
+    alto:numero
+    ancho:numero
+  comenzar
+    bolsa:=0
+    RecibirMensaje(nombre,robotC)
+    RecibirMensaje(alto,robotC)
+    RecibirMensaje(ancho,robotC)
+    repetir 2
+      recorrerP(bolsa,alto)
+      derecha
+      EnviarMensaje(nombre,robotC)
+      EnviarMensaje(bolsa,robotC)
+      depositarP(bolsa)
+      recorrerP(bolsa,ancho)
+      derecha
+      EnviarMensaje(nombre,robotC)
+      EnviarMensaje(bolsa,robotC)
+      depositarP(bolsa)
+  fin
+  robot coordinador
+  variables
+    nombre:numero
+    bolsaF:numero
+    bolsaP:numero
+    bolsa:numero
+    alto:numero
+    ancho:numero
+  comenzar
+    Random(alto,1,19)
+    Random(ancho,1,19)
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(alto,robot1)
+    EnviarMensaje(ancho,robot1)
+    Random(alto,1,19)
+    Random(ancho,1,19)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(alto,robot2)
+    EnviarMensaje(ancho,robot2)
+    repetir 8
+      RecibirMensaje(nombre,*)
+      si(nombre=1)
+        RecibirMensaje(bolsa,robot1)
+        bolsaF:=bolsaF+bolsa
+      sino
+        RecibirMensaje(bolsa,robot2)
+        bolsaP:=bolsaP+bolsa
+    si(bolsaF>bolsaP)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+variables
+  robot1:florero
+  robot2:papelero
+  robotC:coordinador
+comenzar
+  AsignarArea(robot1,areaF)
+  AsignarArea(robot1,areaDF)
+  AsignarArea(robot2,areaP)
+  AsignarArea(robot2,areaDP)
+  AsignarArea(robotC,inicioC)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,21,1)
+  Iniciar(robotC,23,23)
+fin

@@ -1,0 +1,267 @@
+program uziel5;
+type
+    prestamo=record
+        isbn:integer;
+        numSocio:integer;
+        mesP:integer;
+        diaP:integer;
+        cantDiaP:integer;
+    end;
+    
+    arbol1=^nodo1;
+    
+    nodo1=record
+        dato:prestamo;
+        hi:arbol1;
+        hd:arbol1;
+    end;
+    
+    lista=^nodoL;
+    
+    nodoL=record
+        dato:prestamo;
+        sig:lista;
+    end;
+    
+    registro=record
+        isbn:integer;
+        sig:lista;
+    end;
+    
+    arbol2=^nodo2;
+    
+    nodo2=record
+        dato:registro;
+        hi:arbol2;
+        hd:arbol2
+    end;
+    
+    info=record
+        isbn:integer;
+        cantVP:integer;
+    end;
+    
+    listaOrd=^nodoInfo;
+    
+    nodoInfo=record
+        dato:info;
+        sig:listaOrd;
+    end;
+    
+    procedure crearA1(var a:arbol1; r:prestamo);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.isbn>r.isbn)then
+                    crearA1(a^.hi,r)
+                else
+                    crearA1(a^.hd,r)
+            end
+            else begin
+                new(a);
+                a^.dato:=r;
+            end;
+        end;
+    
+    procedure crearA2(var a:arbol2; isbn:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.isbn>isbn)then
+                    crearA2(a^.hi,isbn)
+                else
+                    crearA2(a^.hd,isbn)
+            end
+            else begin
+                new(a);
+                a^.dato.isbn:=isbn;
+            end;
+        end;
+    
+    procedure crearL(var l:lista; r:prestamo);
+        begin
+            if(l<>nil)then begin
+                crearL(l^.sig,r);
+            end
+            else begin
+                new(l);
+                l^.dato:=r;
+            end
+        end;
+    
+    procedure leerDato(var a1:arbol1; var a2:arbol2);
+        var
+            r:prestamo;
+        begin
+            readln(r.isbn);
+            while(r.isbn<>-1)do begin
+                readln(r.numSocio);
+                readln(r.mesP);
+                readln(r.diaP);
+                readln(r.cantDiaP);
+                crearA1(a1,r);
+                crearA2(a2,r.isbn);
+                crearL(a2^.dato.sig,r);
+                readln(r.isbn);
+            end;
+        end;
+        
+    procedure mayorI(a:arbol1; var MY:integer);
+        begin
+            if(a<>nil)then begin
+                MY:=a^.dato.isbn;
+                mayorI(a^.hd,MY);
+            end;
+        end;
+        
+    procedure menorI(a:arbol2; var MC:integer);
+        begin
+            if(a<>nil)then begin
+                MC:=a^.dato.isbn;
+                menorI(a^.hi,MC);
+            end;
+        end;
+        
+    procedure socioPrest1(a:arbol1; v:integer; var SP:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.numSocio=v)then
+                    SP:=SP+1;
+                socioPrest1(a^.hi,v,SP);
+                socioPrest1(a^.hd,v,SP);
+            end;
+        end;
+        
+    procedure recorrerL(l:lista; var cant:integer);
+        begin
+            while(l<>nil)do begin
+                cant:=cant+1;
+                l:=l^.sig;
+            end;
+        end;
+    
+    procedure socioPrest2(a:arbol2; v:integer; var SP:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.sig^.dato.numSocio=v)then begin
+                    recorrerL(a^.dato.sig,SP)
+                end
+                else begin
+                        socioPrest2(a^.hi,v,SP);
+                        socioPrest2(a^.hd,v,SP);
+                end;
+            end;
+        end;
+        
+    procedure cargarL(var l:listaOrd; isbn:integer);
+        begin
+            if(l=nil)then begin
+                new(l);
+                l^.dato.isbn:=isbn;
+                l^.dato.cantVP:=1;
+            end
+            else begin
+                if(l^.dato.isbn=isbn)then
+                    l^.dato.cantVP:=l^.dato.cantVP+1
+                else
+                    cargarL(l^.sig,isbn);
+            end;
+        end;
+        
+    procedure movilizarL(var l:listaOrd; a:lista; isbn:integer);
+        begin
+            while(a<>nil)do begin
+                cargarL(l,isbn);
+            end;
+        end;
+        
+    procedure generar1(a:arbol1; var l:listaOrd);
+        begin
+            if(a<>nil)then begin
+                generar1(a^.hi,l);
+                cargarL(l,a^.dato.isbn);
+                generar1(a^.hd,l);
+            end;
+        end;
+        
+    procedure generar2(a:arbol2; var l:listaOrd);
+        begin
+            if(a<>nil)then begin
+                generar2(a^.hi,l);
+                movilizarL(l,a^.dato.sig,a^.dato.isbn);
+                generar2(a^.hd,l);
+            end;
+        end;
+        
+    procedure change(var li:integer; var ls:integer);
+        var
+            aux:integer;
+        begin
+            if(li>ls)then begin
+                aux:=li;
+                li:=ls;
+                ls:=aux;
+            end;
+        end;
+    
+    procedure dosValores1(a:arbol1; li:integer; ls:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.isbn>li)then begin
+                    if(a^.dato.isbn<ls)then begin
+                        cant:=cant+1;
+                        dosValores1(a^.hi,li,ls,cant);
+                        dosValores1(a^.hd,li,ls,cant);
+                    end
+                    else
+                        dosValores1(a^.hi,li,ls,cant);
+                end
+                else
+                    dosValores1(a^.hd,li,ls,cant);
+            end;
+        end;
+    
+    procedure dosValores2(a:arbol2; li:integer; ls:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.isbn>li)then begin
+                    if(a^.dato.isbn<ls)then begin
+                        recorrerL(a^.dato.sig,cant);
+                        dosValores2(a^.hi,li,ls,cant);
+                        dosValores2(a^.hd,li,ls,cant);
+                    end
+                    else
+                        dosValores2(a^.hi,li,ls,cant);
+                end
+                else
+                    dosValores2(a^.hd,li,ls,cant);
+            end;
+        end;
+var
+    a1:arbol1;
+    a2:arbol2;
+    l1:listaOrd;
+    l2:listaOrd;
+    li:integer;
+    ls:integer;
+    v:integer;
+    MY:integer;
+    MC:integer;
+    SP1:integer;
+    SP2:integer;
+    cant1:integer;
+    cant2:integer;
+begin
+    leerDato(a1,a2);
+    mayorI(a1,MY);
+    menorI(a2,MC);
+    readln(v);
+    socioPrest1(a1,v,SP1);
+    readln(v);
+    socioPrest2(a2,v,SP2);
+    generar1(a1,l1);
+    generar2(a2,l2);
+    readln(li);
+    readln(ls);
+    change(li,ls);
+    dosValores1(a1,li,ls,cant1);
+    dosValores2(a2,li,ls,cant2);
+end.

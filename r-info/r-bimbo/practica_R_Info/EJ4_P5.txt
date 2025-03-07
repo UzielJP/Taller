@@ -1,0 +1,114 @@
+programa EJ4_P5
+procesos
+  proceso dejarFlor(ES bolsa:numero)
+  comenzar
+    repetir bolsa
+      depositarFlor
+  fin
+  proceso agarrarFlor(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+areas
+  areapR1: AreaP(1,1,1,1)
+  areapR2: AreaP(2,1,2,1)
+  areapR3: AreaP(3,1,3,1)
+  areapFisc: AreaP(4,1,4,1)
+  areaPC: AreaPC(40,40,60,60)
+  areaPC2: AreaPC(10,10,10,10)
+robots
+  robot Recolector
+  variables
+    bolsa:numero
+    calle:numero
+    avenida:numero
+    ActAv:numero
+    ActCa:numero
+    Id:numero
+    codigo:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    ActAv:=PosAv
+    ActCa:=PosCa
+    bolsa:=0
+    RecibirMensaje(codigo,Fiscal)
+    mientras(codigo=1)  
+      RecibirMensaje(avenida,Fiscal)
+      RecibirMensaje(calle,Fiscal)
+      BloquearEsquina(avenida,calle)
+      Pos(avenida,calle)
+      agarrarFlor(bolsa)
+      Pos(ActAv,ActCa)
+      LiberarEsquina(avenida,calle)
+      RecibirMensaje(codigo,Fiscal)
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    dejarFlor(bolsa)
+    Pos(ActAv,ActCa)
+    LiberarEsquina(10,10)
+    EnviarMensaje(Id,Fiscal)
+  fin
+  robot Servidor
+  variables
+    bolsa:numero
+    robotId:numero
+    avenida:numero
+    calle:numero
+    Id:numero
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    repetir 8
+      Random(robotId,1,3)
+      Random(avenida,40,60)
+      Random(calle,40,60)
+      si(robotId=1)
+        EnviarMensaje(1,R1)
+        EnviarMensaje(avenida,R1)
+        EnviarMensaje(calle,R1)
+      sino
+        si(robotId=2)
+          EnviarMensaje(1,R2)
+          EnviarMensaje(avenida,R2)
+          EnviarMensaje(calle,R2)
+        sino
+          EnviarMensaje(1,R3)
+          EnviarMensaje(avenida,R3)
+          EnviarMensaje(calle,R3)
+    EnviarMensaje(0,R1)
+    EnviarMensaje(0,R2)
+    EnviarMensaje(0,R3)
+    repetir 3
+      RecibirMensaje(Id,*)
+    BloquearEsquina(10,10)
+    Pos(10,10)
+    agarrarFlor(bolsa)
+    Pos(4,1)
+    LiberarEsquina(10,10)
+    Informar(bolsa)
+  fin
+variables
+  R1:Recolector
+  R2:Recolector
+  R3:Recolector
+  Fiscal:Servidor
+comenzar
+  AsignarArea(R1,areapR1)
+  AsignarArea(R1,areaPC)
+  AsignarArea(R1,areaPC2)
+  AsignarArea(R2,areapR2)
+  AsignarArea(R2,areaPC)
+  AsignarArea(R2,areaPC2)
+  AsignarArea(R3,areapR3)
+  AsignarArea(R3,areaPC)
+  AsignarArea(R3,areaPC2)
+  AsignarArea(Fiscal,areapFisc)
+  AsignarArea(Fiscal,areaPC2)
+  Iniciar(R1,1,1)
+  Iniciar(R2,2,1)
+  Iniciar(R3,3,1)
+  Iniciar(Fiscal,4,1)
+fin

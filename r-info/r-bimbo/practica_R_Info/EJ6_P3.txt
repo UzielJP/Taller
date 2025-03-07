@@ -1,0 +1,259 @@
+programa EJ6_P3
+procesos
+  proceso agarrarPapel(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso agarrarFlor(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso depositarF(E bolsaF:numero)
+  comenzar
+    repetir bolsaF
+      depositarFlor
+  fin
+  proceso depositarP(E bolsaP:numero)
+  comenzar
+    repetir bolsaP
+      depositarPapel
+  fin
+areas
+  areac: AreaC(1,1,100,100)
+robots
+  robot Florero
+  variables
+    Id:numero
+    bolsa:numero
+    fini:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    BloquearEsquina(PosAv,PosCa)
+    agarrarFlor(bolsa)
+    repetir 6
+      BloquearEsquina(PosAv,PosCa+1)
+      mover
+      agarrarFlor(bolsa)
+      LiberarEsquina(PosAv,PosCa-1)
+    derecha
+    repetir 6
+      BloquearEsquina(PosAv+1,PosCa)
+      mover
+      agarrarFlor(bolsa)
+      LiberarEsquina(PosAv-1,PosCa)
+    derecha
+    repetir 6
+      BloquearEsquina(PosAv,PosCa-1)
+      mover
+      agarrarFlor(bolsa)
+      LiberarEsquina(PosAv,PosCa+1)
+    derecha
+    repetir 6
+      BloquearEsquina(PosAv-1,PosCa)
+      mover
+      agarrarFlor(bolsa)
+      LiberarEsquina(PosAv+1,PosCa)
+    derecha
+    EnviarMensaje(Id,Fiscal)
+    RecibirMensaje(avenida,Fiscal)
+    RecibirMensaje(calle,Fiscal)
+    Pos(avenida,calle)
+    fini:=1
+    mientras(fini=1)&(PosCa<100)
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+        mover
+      sino
+        fini:=0
+    Informar(PosCa)
+  fin
+  robot Papelero
+  variables
+    Id:numero
+    bolsa:numero
+    fini:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    BloquearEsquina(PosAv,PosCa)
+    agarrarPapel(bolsa)
+    repetir 7
+      BloquearEsquina(PosAv,PosCa+1)
+      mover
+      agarrarPapel(bolsa)
+      LiberarEsquina(PosAv,PosCa-1)
+    derecha
+    repetir 7
+      BloquearEsquina(PosAv+1,PosCa)
+      mover
+      agarrarPapel(bolsa)
+      LiberarEsquina(PosAv-1,PosCa)
+    derecha
+    repetir 7
+      BloquearEsquina(PosAv,PosCa-1)
+      mover
+      agarrarPapel(bolsa)
+      LiberarEsquina(PosAv,PosCa+1)
+    derecha
+    repetir 7
+      BloquearEsquina(PosAv-1,PosCa)
+      mover
+      agarrarPapel(bolsa)
+      LiberarEsquina(PosAv+1,PosCa)
+    derecha
+    EnviarMensaje(Id,Fiscal)
+    RecibirMensaje(avenida,Fiscal)
+    RecibirMensaje(calle,Fiscal)
+    Pos(avenida,calle)
+    fini:=1
+    mientras(fini=1)&(PosCa<100)
+      si(HayPapelEnLaBolsa)
+        depositarPapel
+        mover
+      sino
+        fini:=0
+    Informar(PosCa)
+  fin
+  robot Recolector
+  variables
+    Id:numero
+    fini:numero
+    bolsaP:numero
+    bolsaF:numero
+    calle:numero
+    avenida:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsaP:=0
+    bolsaF:=0
+    BloquearEsquina(PosAv,PosCa)
+    agarrarFlor(bolsaP)
+    agarrarPapel(bolsaF)
+    repetir 10
+      BloquearEsquina(PosAv,PosCa+1)
+      mover
+      agarrarFlor(bolsaP)
+      agarrarPapel(bolsaF)
+      LiberarEsquina(PosAv,PosCa-1)
+    derecha
+    repetir 10
+      BloquearEsquina(PosAv+1,PosCa)
+      mover
+      agarrarFlor(bolsaP)
+      agarrarPapel(bolsaF)
+      LiberarEsquina(PosAv-1,PosCa)
+    derecha
+    repetir 10
+      BloquearEsquina(PosAv,PosCa-1)
+      mover
+      agarrarFlor(bolsaP)
+      agarrarPapel(bolsaF)
+      LiberarEsquina(PosAv,PosCa+1)
+    derecha
+    repetir 10
+      BloquearEsquina(PosAv-1,PosCa)
+      mover
+      agarrarFlor(bolsaP)
+      agarrarPapel(bolsaF)
+      LiberarEsquina(PosAv+1,PosCa)
+    derecha
+    EnviarMensaje(Id,Fiscal)
+    RecibirMensaje(avenida,Fiscal)
+    RecibirMensaje(calle,Fiscal)
+    Pos(avenida,calle)
+    fini:=1
+    mientras(fini=1)&(PosCa<100)
+      si(HayFlorEnLaBolsa)|(HayPapelEnLaBolsa)
+        si(HayFlorEnLaBolsa)
+          depositarFlor
+        si(HayPapelEnLaBolsa)
+          depositarPapel
+        mover
+      sino
+        fini:=0
+    Informar(PosCa)
+  fin
+  robot servidor
+  variables
+    ganador:numero
+    id:numero
+    Av20:numero
+    Av21:numero
+    Av22:numero
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    Av20:=0
+    Av21:=0
+    Av22:=0
+    repetir 3
+      RecibirMensaje(id,*)
+      si(id=1)
+        si(Av20=0)
+          EnviarMensaje(20,R1)
+          EnviarMensaje(1,R1)
+          Av20:=1
+        sino
+          si(Av21=0)
+            EnviarMensaje(21,R1)
+            EnviarMensaje(1,R1)
+            Av21:=1
+          sino
+            EnviarMensaje(22,R1)
+            EnviarMensaje(1,R1)
+            Av22:=1
+      sino
+        si(id=2)
+          si(Av20=0)
+            EnviarMensaje(20,R2)
+            EnviarMensaje(1,R2)
+            Av20:=1
+          sino
+            si(Av21=0)
+              EnviarMensaje(21,R2)
+              EnviarMensaje(1,R2)
+              Av21:=1
+            sino
+              EnviarMensaje(22,R2)
+              EnviarMensaje(1,R2)
+              Av22:=1
+        sino
+          si(Av20=0)
+            EnviarMensaje(20,R3)
+            EnviarMensaje(1,R3)
+            Av20:=1
+          sino
+            si(Av21=0)
+              EnviarMensaje(21,R3)
+              EnviarMensaje(1,R3)
+              Av21:=1
+            sino
+              EnviarMensaje(22,R3)
+              EnviarMensaje(1,R3)
+              Av22:=1 
+  fin
+variables
+  R1:Florero
+  R2:Papelero
+  R3:Recolector
+  Fiscal:servidor
+comenzar
+  AsignarArea(R1,areac)
+  AsignarArea(R3,areac)
+  AsignarArea(R2,areac)
+  AsignarArea(Fiscal,areac)
+  Iniciar(R1,2,2)
+  Iniciar(R2,9,9)
+  Iniciar(R3,5,5)
+  Iniciar(Fiscal,1,1)
+fin

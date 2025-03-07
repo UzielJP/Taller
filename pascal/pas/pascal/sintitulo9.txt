@@ -1,0 +1,208 @@
+program uziel9;
+type
+    reclamo=record
+        dni:integer;
+        codigo:integer;
+        tipo:integer;
+        ano:integer;
+    end;
+    
+    lista= ^nodoL;
+    
+    nodoL=record
+        dato:reclamo;
+        sig:lista;
+    end;
+    
+    info=record
+        dni:integer;
+        sig:lista;
+    end;
+    
+    arbol= ^nodoA;
+    
+    nodoA=record
+        dato:info;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    listaL2= ^nodoL2;
+    
+    nodoL2=record
+        codigo:integer;
+        sig:listaL2;
+    end;
+    
+    procedure crearL(var l:lista; r:reclamo);
+        begin
+            if(l<>nil)then
+                crearL(l^.sig,r)
+            else begin
+                new(l);
+                l^.dato:=r;
+                l^.sig:=nil;
+                writeln('codigo C2');
+            end;
+            writeln('codigo C1');
+        end;
+        
+    procedure crearL2(var l:listaL2; codigo:integer);
+        begin
+            if(l<>nil)then
+                crearL2(l^.sig,codigo)
+            else begin
+                new(l);
+                l^.codigo:=codigo;
+                l^.sig:=nil;
+                writeln('codigo CL2_N');
+            end;
+            writeln('codigo CL2');
+        end;
+        
+    procedure crearA(var a:arbol; r:reclamo);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.dni=r.dni)then begin
+                    crearL(a^.dato.sig,r);
+                    writeln('codigo 2')
+                end
+                else begin
+                    writeln('codigo 3');
+                    if(a^.dato.dni>r.dni)then
+                        crearA(a^.hi,r)
+                    else
+                        crearA(a^.hd,r)
+                end
+            end
+            else begin
+                new(a);
+                a^.dato.sig:=nil;
+                a^.dato.dni:=r.dni;
+                crearL(a^.dato.sig,r);
+                writeln('codigo 1');
+            end;
+        end;
+        
+    procedure leerDatos(var a:arbol);
+        var
+            r:reclamo;
+        begin
+            readln(r.codigo);
+            writeln('ingresar año de busqueda');
+            while(r.codigo<>-1)do begin
+                writeln('ingresar dni');
+                readln(r.dni);
+                writeln('ingresar tipo reclamo');
+                readln(r.tipo);
+                writeln('ingresar año reclamo');
+                readln(r.ano);
+                crearA(a,r);
+                writeln('ingresar codigo de nuevo');
+                readln(r.codigo);
+            end;
+        end;
+        
+    procedure recorrerL(l:lista; var cant:integer);
+        begin
+            while(l<>nil)do begin
+                cant:=cant+1;
+                l:=l^.sig;
+            end;
+            writeln('codigo RL1');
+        end;
+        
+    procedure recorrerL2(l:lista; var l2:listaL2; ano:integer);
+        begin
+            while(l<>nil)do begin
+                if(l^.dato.ano=ano)then
+                    crearL2(l2,l^.dato.codigo);
+                l:=l^.sig;
+            end;
+            writeln('codigo RL2');
+        end;
+        
+    procedure superiorA(a:arbol; dni:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.dni=dni)then
+                    recorrerL(a^.dato.sig,cant)
+                else begin
+                    if(a^.dato.dni>dni)then
+                        superiorA(a^.hi,dni,cant)
+                    else
+                        superiorA(a^.hd,dni,cant);
+                end;
+            end;
+            writeln('codigo SPA');
+        end;
+    
+    procedure change(var LI:integer; var LS:integer);
+        var
+            aux:integer;
+        begin
+            if(LI>LS)then begin
+                aux:=LI;
+                LI:=LS;
+                LS:=aux;
+            end;
+            writeln('codigo change');
+        end;
+        
+    procedure dosValores(a:arbol; LI:integer; LS:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.dni>LI)then begin
+                    if(a^.dato.dni<LS)then begin
+                        recorrerL(a^.dato.sig,cant);
+                        dosValores(a^.hi,LI,LS,cant);
+                        dosValores(a^.hd,LI,LS,cant);
+                    end
+                    else
+                        dosValores(a^.hi,LI,LS,cant);
+                end
+                else
+                    dosValores(a^.hd,LI,LS,cant);
+            end;
+            writeln('codigo DSV');
+        end;
+        
+    procedure codigoAno(a:arbol; var l:listaL2; ano:integer);
+        begin
+            if(a<>nil)then begin
+                recorrerL2(a^.dato.sig,l,ano);
+                codigoAno(a^.hi,l,ano);
+                codigoAno(a^.hd,l,ano);
+            end;
+            writeln('codigo CANO');
+        end;
+var
+    a:arbol;
+    l:listaL2;
+    cant:integer;
+    cant2:integer;
+    LI:integer;
+    LS:integer;
+    ano:integer;
+    dni:integer;
+begin
+    a:=nil;
+    l:=nil;
+    cant:=0;
+    cant2:=0;
+    leerDatos(a);
+    writeln('ingresar dni a buscar');
+    readln(dni);
+    superiorA(a,dni,cant);
+    writeln(cant);
+    writeln('limite inferior');
+    readln(LI);
+    writeln('limite superior');
+    readln(LS);
+    change(LI,LS);
+    dosValores(a,LI,LS,cant2);
+    writeln(cant2);
+    writeln('ingresar año de busqueda');
+    readln(ano);
+    codigoAno(a,l,ano);
+end.

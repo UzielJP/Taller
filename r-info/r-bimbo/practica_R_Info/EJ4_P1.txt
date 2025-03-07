@@ -1,0 +1,69 @@
+programa EJ4_P2 
+procesos 
+  proceso agrarrarFlor 
+  comenzar 
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+  fin
+  proceso agarrarPapel 
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+  fin
+areas
+  areap1: AreaP(1,1,25,100) 
+  areap2: AreaP(26,1,50,100) 
+  areap3: AreaP(51,1,75,100) 
+  areap4: AreaP(76,1,100,100) 
+robots 
+  robot movedor1 
+  comenzar 
+    mientras(PosCa<100) 
+      agarrarPapel 
+      mover 
+    repetir 24 
+      Pos(PosAv+1,1)   
+      mientras(PosCa<100) 
+        agarrarPapel 
+        mover 
+    Pos(PosAv+26,1)
+    mientras(PosCa<100) 
+      agarrarPapel 
+      mover 
+    repetir 24 
+      Pos(PosAv+1,1)   
+      mientras(PosCa<100) 
+        agarrarPapel 
+        mover
+  fin
+  robot movedor2 
+  comenzar  
+    mientras(PosCa<100) 
+      agarrarPapel 
+      mover 
+    repetir 24 
+      Pos(PosAv+1,1)   
+      mientras(PosCa<100) 
+        agarrarPapel 
+        mover 
+    Pos(PosAv+26,1)
+    mientras(PosCa<100) 
+      agarrarPapel 
+      mover 
+    repetir 24 
+      Pos(PosAv+1,1)   
+      mientras(PosCa<100) 
+        agarrarPapel 
+        mover
+  fin 
+variables 
+  r1:movedor1 
+  r2:movedor2 
+comenzar 
+  AsignarArea(r1,areap1) 
+  AsignarArea(r1,areap3) 
+  AsignarArea(r2,areap2) 
+  AsignarArea(r2,areap4) 
+  Iniciar(r1,1,1) 
+  Iniciar(r2,26,1) 
+fin

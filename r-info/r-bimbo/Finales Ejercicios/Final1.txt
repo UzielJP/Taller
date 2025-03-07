@@ -1,0 +1,125 @@
+programa final1
+areas
+  AreaFE: AreaP(6,1,6,1)
+  AreaPE: AreaP(6,3,6,3)
+  AreaFB: AreaP(6,2,6,2)
+  AreaPB: AreaP(6,4,6,4)
+  AreaComp: AreaPC(1,1,5,5)
+  AreaFisc: AreaP(6,5,6,5)
+robots
+  robot Esconder
+  variables
+    Id:numero
+    av:numero
+    ca:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    avenida:=PosAv
+    calle:=PosCa
+    repetir 2
+      Random(av,1,5)
+      Random(ca,1,5)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      si(Id=1)
+        depositarFlor
+      sino
+        depositarPapel
+      Pos(avenida,calle)
+      LiberarEsquina(av,ca)
+    EnviarMensaje(Id,Fiscal)
+  fin
+  robot Buscar
+  variables
+    Id:numero
+    bolsa:numero
+    avenida:numero
+    calle:numero
+    ca:numero
+    av:numero
+    cont:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    avenida:=PosAv
+    calle:=PosCa
+    cont:=0
+    bolsa:=0
+    mientras(cont=0)
+      RecibirMensaje(cont,Fiscal)
+      si(cont=0)
+        Random(av,1,5)
+        Random(ca,1,5)
+        BloquearEsquina(av,ca)
+        Pos(av,ca)
+        si(Id=3)
+          si(HayPapelEnLaEsquina)
+            tomarPapel
+            bolsa:=bolsa+1
+        sino
+          si(HayFlorEnLaEsquina)
+            tomarFlor
+            bolsa:=bolsa+1
+        Pos(avenida,calle)
+        LiberarEsquina(av,ca)
+      EnviarMensaje(Id,Fiscal)
+      EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot Coordinar
+  variables
+    bolsaF:numero
+    bolsaP:numero
+    bolsa:numero
+    Id:numero
+    num:numero
+  comenzar
+    EnviarMensaje(1,EsconderF)
+    EnviarMensaje(2,EsconderP)
+    EnviarMensaje(3,BuscarF)
+    EnviarMensaje(4,BuscarP)
+    repetir 2
+      RecibirMensaje(num,*)
+    bolsaF:=0
+    bolsaP:=0
+    mientras(bolsaF<2)&(bolsaP<2)
+      EnviarMensaje(0,BuscarF)
+      EnviarMensaje(0,BuscarP)
+      repetir 2
+        RecibirMensaje(Id,*)
+        si(Id=3)
+          RecibirMensaje(bolsa,BuscarF)
+          bolsaF:=bolsaF+bolsa
+        sino
+          RecibirMensaje(bolsa,BuscarP)
+          bolsaP:=bolsaP+bolsa
+    EnviarMensaje(1,BuscarF)
+    EnviarMensaje(1,BuscarP)
+    si(bolsaF>bolsaP)
+      Informar(1)
+    sino
+      si(bolsaP>bolsaF)
+        Informar(2)
+  fin
+variables
+  Fiscal:Coordinar
+  EsconderF:Esconder
+  EsconderP:Esconder
+  BuscarF:Buscar
+  BuscarP:Buscar
+comenzar
+  AsignarArea(EsconderF,AreaFE)
+  AsignarArea(EsconderF,AreaComp)
+  AsignarArea(EsconderP,AreaPE)
+  AsignarArea(EsconderP,AreaComp)
+  AsignarArea(BuscarF,AreaFB)
+  AsignarArea(BuscarF,AreaComp)
+  AsignarArea(BuscarP,AreaPB)
+  AsignarArea(BuscarP,AreaComp)
+  AsignarArea(Fiscal,AreaFisc)
+  Iniciar(Fiscal,6,5)
+  Iniciar(EsconderF,6,1)
+  Iniciar(EsconderP,6,3)
+  Iniciar(BuscarF,6,2)
+  Iniciar(BuscarP,6,4)
+fin

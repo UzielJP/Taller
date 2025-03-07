@@ -1,0 +1,194 @@
+program Final2;
+TYPE
+	Reg=record
+		ano:integer;
+		dni:integer;
+		suma:integer;
+		valor:integer;
+		vencimiento:integer;
+	end;
+	
+	lista=^nodol;
+	
+	nodol=record
+		dato:Reg;
+		sig:lista;
+	end;
+	
+	arbol=^nodoa;
+	
+	nodoa=record
+		dato:Reg;
+		hi:arbol;
+		hd:arbol;
+	end;
+	
+	vector=array[0..23]of lista;
+	
+	procedure Leer2(var r:Reg);
+	begin
+		r.dni:=Random(100);
+		r.ano:=Random(23);
+		writeln(r.ano);
+		r.suma:=Random(100)+500;
+		r.valor:=Random(3000);
+		r.vencimiento:=Random(30);
+	end;
+	
+	procedure InsertarOrd(var l:lista; r:Reg);
+	var
+		aux:lista;
+		ant:lista;
+		act:lista;
+	begin
+		ant:=l;
+		act:=l;
+		new(aux);
+		aux^.dato:=r;
+		while(act<>nil)and(r.suma>act^.dato.suma)do begin
+			ant:=act;
+			act:=act^.sig;
+		end;
+		if(ant=act)then
+			l:=aux
+		else
+			ant^.sig:=aux;
+		aux^.sig:=act;
+	end;
+	
+	procedure crearA(var a:arbol; r:Reg);
+	begin
+		if(a<>nil)then begin
+			if(r.dni<=a^.dato.dni)then
+				crearA(a^.hi,r)
+			else
+				crearA(a^.hd,r);
+		end
+		else begin
+			new(a);
+			a^.dato:=r;
+			a^.hi:=nil;
+			a^.hd:=nil;
+		end;
+	end;
+	
+	procedure IniciarV(var v:vector);
+	var
+		i:integer;
+	begin
+		for i:=0 to 23 do begin
+			v[i]:=nil;
+		end; 
+	end;
+	
+	procedure Leer(var r:Reg);
+	begin
+		readln(r.dni);
+		if(r.dni<>-1)then begin
+			readln(r.ano);
+			readln(r.suma);
+			readln(r.vencimiento);
+			readln(r.valor);
+		end;
+	end;
+	
+	procedure cargarV(var v:vector);
+	var
+		r:Reg;
+	begin
+		Leer(r);
+		while(r.dni<>-1)do begin
+			InsertarOrd(v[r.ano],r);
+			Leer(r);
+		end;
+	end;
+	
+	procedure cargarV2(var v:vector);
+	var
+		r:Reg;
+		i:integer;
+	begin
+		Leer2(r);
+		while(r.dni<>-1)do begin
+			for i:= 1 to 100 do begin
+				InsertarOrd(v[r.ano],r);
+				Leer2(r);
+			end;
+			r.dni:=-1;
+		end;
+	end;
+	
+	procedure recorrerL(l:lista; var a:arbol; x:integer);
+	begin
+		while(l<>nil)do begin
+			if(l^.dato.suma<x)then
+				crearA(a,l^.dato);
+			l:=l^.sig;
+		end;
+	end;
+	
+	procedure cargarA(var a:arbol; v:vector; x:integer);
+	var
+		i:integer;
+	begin
+		for i:=0 to 23 do begin
+			recorrerL(v[i],a,x);
+		end;
+	end;
+	
+	procedure CantPoliza(a:arbol; x:integer; var cant:integer);
+	begin
+		if(a<>nil)then begin
+			if(a^.dato.valor>x)then
+				cant:=cant+1;
+			CantPoliza(a^.hi,x,cant);
+			CantPoliza(a^.hd,x,cant);
+		end;
+	end;
+	
+	procedure informarL(l:lista);
+	begin
+		while(l<>nil)do begin
+			writeln('Anio: ',l^.dato.ano+2000,'. Dni: ',l^.dato.dni,'. Suma: ',l^.dato.suma,'. valor: ',l^.dato.valor,'. vencimiento: ',l^.dato.vencimiento);
+			l:=l^.sig;
+		end;
+	end;
+	
+	procedure informarV(v:vector);
+	var
+		i:integer;
+	begin
+		for i:=0 to 23 do begin
+			informarL(v[i]);
+		end;
+	end;
+	
+	procedure informarA(a:arbol);
+	begin
+		if(a<>nil)then begin
+			informarA(a^.hi);
+			writeln('Dni: ',a^.dato.dni,'. Suma: ',a^.dato.suma,'. valor: ',a^.dato.valor,'. vencimiento: ',a^.dato.vencimiento,'. Año: ',a^.dato.ano+2000);
+			informarA(a^.hd);
+		end;
+	end;
+VAR
+	v:vector;
+	a:arbol;
+	cant:integer;
+	valor:integer;
+	x:integer;
+BEGIN
+	a:=nil;
+	cant:=0;
+	IniciarV(v);
+	cargarV2(v);
+	informarV(v);
+	writeln('Ingresar algun valor mayor a 82000');
+	readln(x);
+	cargarA(a,v,x);
+	informarA(a);
+	writeln('Ingresar algun valor pequeño como 1000');
+	readln(valor);
+	CantPoliza(a,valor,cant);
+	writeln(cant);
+END.

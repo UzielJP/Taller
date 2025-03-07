@@ -1,0 +1,145 @@
+program Final_20_2;
+type
+	Reg=record
+		legajo:integer;
+		nombre:string;
+		cant:integer;
+	end;
+	
+	lista=^nodol;
+	
+	nodol=record
+		dato:Reg;
+		sig:lista;
+	end;
+	
+	arbol=^nodoa;
+	
+	nodoa=record
+		dato:Reg;
+		hi:arbol;
+		hd:arbol;
+	end;
+	
+	procedure crearA(var a:arbol; r:Reg);
+	begin
+		if(a<>nil)then begin
+			if(r.legajo<=a^.dato.legajo)then
+				crearA(a^.hi,r)
+			else
+				crearA(a^.hd,r)
+		end
+		else begin
+			new(a);
+			a^.dato:=r;
+			a^.hd:=nil;
+			a^.hi:=nil;
+		end;
+	end;
+	
+	procedure InsertarOrd(var l:lista; r:Reg);
+	var
+		aux:lista;
+		ant:lista;
+		act:lista;
+	begin
+		ant:=l;
+		act:=l;
+		new(aux);
+		aux^.dato:=r;
+		while(act<>nil)and(r.nombre>act^.dato.nombre)do begin
+			ant:=act;
+			act:=act^.sig;
+		end;
+		if(ant=act)then
+			l:=aux
+		else
+			ant^.sig:=aux;
+		aux^.sig:=act;
+	end;
+	
+	procedure crearL(a:arbol; var l:lista);
+	begin
+		if(a<>nil)then begin
+			if(a^.dato.cant>3)then
+				InsertarOrd(l,a^.dato);
+			crearL(a^.hi,l);
+			crearL(a^.hd,l);
+		end;
+	end;
+	
+	procedure leerA(var r:Reg);
+	begin
+		r.legajo:=Random(1000);
+		writeln('Ingresar Nombre');
+		readln(r.nombre);
+		r.cant:=0;
+	end;
+	
+	procedure cargarA(var a:arbol);
+	var
+		r:Reg;
+		i:integer;
+	begin
+		leerA(r);
+		while(r.legajo<>-1)do begin
+			for i:=1 to 10 do begin
+				crearA(a,r);
+				leerA(r);
+			end;
+			r.legajo:=-1;
+		end;
+	end; 
+	
+	procedure informarL(l:lista);
+	begin
+		while(l<>nil)do begin
+			writeln('Nombre: ',l^.dato.nombre,'. Legajo: ',l^.dato.legajo,'. Cant',l^.dato.cant);
+			l:=l^.sig;
+		end;
+	end;
+	
+	procedure informarA(a:arbol);
+	begin
+		if(a<>nil)then begin
+			informarA(a^.hi);
+			writeln('Legajo: ',a^.dato.legajo,'. Nombre: ',a^.dato.nombre,'. Cant',a^.dato.cant);
+			informarA(a^.hd);
+		end;
+	end;
+	
+	procedure MasUno(a:arbol; x:integer);
+	begin
+		if(a<>nil)then begin
+			if(x=a^.dato.legajo)then begin
+				a^.dato.cant:=a^.dato.cant+1;
+				writeln('se encontro y se logro');
+			end
+			else begin
+				if(x<a^.dato.legajo)then
+					MasUno(a^.hi,x)
+				else
+					MasUno(a^.hd,x);
+			end;
+		end;
+	end;
+var
+	a:arbol;
+	l:lista;
+	x:integer;
+	i:integer;
+	j:integer;
+begin
+	a:=nil;
+	l:=nil;
+	cargarA(a);
+	informarA(a);
+	for i:= 1 to 3 do begin
+		readln(x);
+		for j:= 1 to 4 do begin
+			MasUno(a,x);
+		end;
+	end;
+	crearL(a,l);
+	informarL(l);
+end.

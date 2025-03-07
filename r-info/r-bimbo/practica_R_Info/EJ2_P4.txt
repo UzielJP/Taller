@@ -1,0 +1,102 @@
+programa EJ2_P4
+procesos
+  proceso agarrarPapel(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)&(bolsa<5)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso depositarP(E bolsaP:numero)
+  comenzar
+    repetir bolsaP
+      depositarPapel
+  fin
+  proceso depositarP2(E papel:numero)
+  comenzar
+    repetir papel
+      depositarPapel
+  fin
+  proceso consumir(E papel:numero ES bolsa:numero)
+  comenzar
+    repetir papel
+      si(HayPapelEnLaEsquina)
+        tomarPapel
+        bolsa:=bolsa+1
+  fin
+areas
+  areapP1: AreaP(5,1,5,100)
+  areapP2: AreaP(10,1,10,100)
+  areapC1: AreaP(11,1,11,1)
+  areapC2: AreaP(12,1,12,1)
+  areac: AreaC(50,50,50,50)
+robots
+  robot Productor
+  variables
+    Id:numero
+    bolsa:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    bolsa:=0
+    mientras(PosCa<100)
+      agarrarPapel(bolsa)
+      si(bolsa=5)
+        avenida:=PosAv
+        calle:=PosCa
+        BloquearEsquina(50,50)
+        Pos(50,50)
+        depositarP(bolsa)
+        Pos(avenida,calle)
+        LiberarEsquina(50,50)
+        bolsa:=0
+      sino
+        mover
+    Informar(PosCa)
+  fin
+  robot Consumidor
+  variables
+    papel:numero
+    bolsa:numero
+    error:numero
+    avenida:numero
+    calle:numero
+  comenzar
+    avenida:=PosAv
+    calle:=PosCa
+    bolsa:=0
+    error:=0
+    Random(papel,2,5)
+    mientras(error<8)
+      BloquearEsquina(50,50)
+      Pos(50,50)
+      consumir(papel,bolsa)
+      Pos(avenida,calle)
+      LiberarEsquina(50,50)
+      si(bolsa=papel)  
+        error:=0
+        Informar(error)
+        depositarP2(papel)
+        bolsa:=bolsa-papel
+        Random(papel,2,5)
+      sino
+        error:=error+1
+  fin
+variables
+  P1:Productor
+  P2:Productor
+  C1:Consumidor
+  C2:Consumidor
+comenzar
+  AsignarArea(P1,areapP1)
+  AsignarArea(P1,areac)
+  AsignarArea(P2,areapP2)
+  AsignarArea(P2,areac)
+  AsignarArea(C1,areapC1)
+  AsignarArea(C1,areac)
+  AsignarArea(C2,areapC2)
+  AsignarArea(C2,areac)
+  Iniciar(P1,5,1)
+  Iniciar(P2,10,1)
+  Iniciar(C1,11,1)
+  Iniciar(C2,12,1)
+fin

@@ -1,0 +1,131 @@
+program uziel;
+type
+	
+	Registro=record
+		numero:integer;
+		nombre:string;
+		edad:integer;
+	end;
+	
+	arbol= ^socio;
+	
+	socio=record
+		reg:Registro;
+		hi:arbol;
+		hd:arbol;
+	end;
+	
+	procedure crearArb(var a:arbol; r:Registro);
+	begin
+		if(a<>nil)then
+			begin
+				if(a^.reg.numero>r.numero)then
+				    begin
+				        writeln('hola iz');
+					    crearArb(a^.hi,r);
+					end
+				else
+				    begin
+				        writeln('hola de');
+					    crearArb(a^.hd,r)
+					end
+			end
+		else
+			begin
+			    writeln('hola new');
+				new(a);
+				a^.reg:=r;
+			end;
+	end;
+		
+	procedure minimoNum(a:arbol; var minNum:integer);
+			begin
+				if(a<>nil)then
+					begin
+						if(a^.reg.numero<minNum)then
+							minNum:=a^.reg.numero;
+						minimoNum(a^.hi,minNum);
+					end
+			end;
+			
+	procedure maximoNum(a:arbol; var maxNum:integer);
+		begin
+			if(a<>nil)then
+				begin
+					if(a^.reg.numero>maxNum)then
+						maxNum:=a^.reg.numero;
+					maximoNum(a^.hd,maxNum);
+				end
+		end;
+		
+	procedure mayorEdad(a:arbol; var maxEdad:integer);
+		begin
+			if(a<>nil)then
+				begin
+					if(a^.reg.edad>maxEdad)then
+						maxEdad:=a^.reg.edad;
+					mayorEdad(a^.hi,maxEdad);
+					mayorEdad(a^.hd,maxEdad);
+				end;
+		end;
+		
+	procedure buscarN(a:arbol; nombre:string; var ok:boolean);
+		begin
+			if(a<>nil)then begin
+				if(a^.reg.nombre=nombre)then
+					ok:=true;
+				buscarN(a^.hi,nombre,ok);
+				buscarN(a^.hd,nombre,ok);
+			end	
+		end;
+		
+	procedure leerReg(r:Registro);
+		begin
+			readln(r.numero);
+			if(r.numero<>0)then
+				begin
+					readln(r.edad);
+					readln(r.nombre);
+				end
+		end;
+		
+	procedure cargarArbol(var a:arbol);
+	    var 
+	        r:Registro;
+		begin
+            readln(r.numero);
+			while(r.numero<>0)do begin
+			    readln(r.edad);
+			    readln(r.nombre);
+			    writeln('hola');
+				crearArb(a,r);
+				readln(r.numero);
+			end;
+		end;
+var
+    a:arbol;
+    maxEdad:integer;
+    maxNum:integer;
+    minNum:integer;
+    ok:boolean;
+    nombre:string;
+begin
+    a:=nil;
+    ok:=false;
+    maxEdad:=0;
+    maxNum:=0;
+    minNum:=9999;
+    cargarArbol(a);
+    writeln('ingresar numero a leer');
+    readln(nombre);
+    buscarN(a,nombre,ok);
+    mayorEdad(a,maxEdad);
+    maximoNum(a,maxNum);
+    minimoNum(a,minNum);
+    writeln('la maxima edad es de: ',maxEdad);
+    writeln('el maximo numero es: ',maxNum);
+    writeln('el minimo numero es: ',minNum);
+    writeln('el nombre buscado es: ',ok);
+end.
+
+

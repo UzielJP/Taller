@@ -1,0 +1,224 @@
+program Hello;
+type
+    
+    RegAuto=record
+        Marca:integer;
+        Modelo:string;
+        Patente:integer;
+        AnoF:integer;
+    end;
+    
+    arbol=^nodoa;
+    
+    nodoa=record
+        dato:RegAuto;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    lista=^nodol;
+    
+    nodol=record
+        dato:RegAuto;
+        sig:lista;
+    end;
+    
+    arbolist=^nodoal;
+    
+    nodoal=record
+        list:lista;
+        hi:arbolist;
+        hd:arbolist;
+    end;
+    
+    vector=array[2010..2018]of lista;
+    
+    procedure IniciarV(var vec:vector);
+    var
+        i:integer;
+    begin
+        for i:= 2010 to 2018 do begin
+            vec[i]:=nil;        
+        end;
+    end;
+    
+    procedure crearA(var a:arbol; r:RegAuto);
+    begin
+        if(a<>nil)then begin
+            if(r.Patente<a^.dato.Patente)then
+                crearA(a^.hi,r)
+            else
+                crearA(a^.hd,r);
+        end
+        else begin
+            new(a);
+            a^.dato:=r;
+            a^.hi:=nil;
+            a^.hd:=nil;
+        end;
+    end;
+    
+    procedure agregarL(var l:lista; r:RegAuto);
+    var
+        aux:lista;
+    begin
+        new(aux);
+        aux^.dato:=r;
+        aux^.sig:=l;
+        l:=aux;
+    end;
+    
+    procedure crearAL(var a:arbolist; r:RegAuto);
+    begin
+        if(a<>nil)then begin
+            if(r.Marca=a^.list^.dato.Marca)then
+                agregarL(a^.list,r)
+            else begin
+                if(r.Marca<a^.list^.dato.Marca)then
+                    crearAL(a^.hi,r)
+                else
+                    crearAL(a^.hd,r);
+            end;
+        end
+        else begin
+            new(a);
+            a^.list:=nil;
+            a^.hi:=nil;
+            a^.hd:=nil;
+            agregarL(a^.list,r);
+        end;
+    end;
+    
+    procedure LeerA(var r:RegAuto);
+    begin
+        writeln('Ingresar Patente');
+        readln(r.Patente);
+        if(r.Patente<>-1)then begin
+            writeln('Ingresar Marca');
+            readln(r.Marca);
+            writeln('Ingresar Modelo');
+            readln(r.Modelo);
+            writeln('Ingresar AnoF (2010<=x<=2018)');
+            readln(r.AnoF);
+        end;
+    end;
+    
+    procedure cargarTotal(var a:arbol; var al:arbolist);
+    var
+        r:RegAuto;
+    begin
+        LeerA(r);
+        while(r.Patente<>-1)do begin
+            crearA(a,r);
+            crearAL(al,r);
+            LeerA(r);
+        end;
+    end;
+    
+    procedure CantMarca1(a:arbol; x:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.Marca=x)then
+                cant:=cant+1;
+            CantMarca1(a^.hi,x,cant);
+            CantMarca1(a^.hd,x,cant);
+        end;
+    end;
+    
+    procedure recorrerL(l:lista; var cant:integer);
+    begin
+        while(l<>nil)do begin
+            cant:=cant+1;
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure CantMarca2(a:arbolist; x:integer; var cant:integer);
+    begin
+        if(a<>nil)then begin
+            if(a^.list^.dato.Marca=x)then
+                recorrerL(a^.list,cant)
+            else begin
+                if(x<a^.list^.dato.Marca)then
+                    CantMarca2(a^.hi,x,cant)
+                else
+                    CantMarca2(a^.hd,x,cant);
+            end;
+        end;
+    end;
+    
+    procedure Agrupar(a:arbol;var v:vector);
+    begin
+        if(a<>nil)then begin
+            agregarL(v[a^.dato.AnoF],a^.dato);
+            Agrupar(a^.hi,v);
+            Agrupar(a^.hd,v);
+        end;
+    end;
+    
+    function BuscarP(a:arbol; x:integer):string;
+    begin
+        if(a<>nil)then begin
+            if(a^.dato.Patente=x)then
+                BuscarP:=a^.dato.Modelo
+            else begin
+                if(x<a^.dato.Patente)then
+                    BuscarP:=BuscarP(a^.hi,x)
+                else
+                    BuscarP:=BuscarP(a^.hd,x);
+            end;
+        end;
+    end;
+    
+    procedure Buscar(l:lista; x:integer; var modelo:string);
+    begin
+        while(l<>nil)and(modelo = 'nada')do begin
+            if(l^.dato.Patente=x)then
+                modelo:=l^.dato.modelo;
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure BuscarPL(a:arbolist; x:integer; var modelo:string);
+    begin
+        if(a<>nil)then begin
+            Buscar(a^.list,x,modelo);
+            if(modelo = 'nada')then begin
+                BuscarPL(a^.hi,x,modelo);
+                BuscarPL(a^.hd,x,modelo);
+            end;
+        end;
+    end;
+var
+  v:vector; 
+  a:arbol;
+  al:arbolist;
+  x:integer;
+  cant:integer;
+  cantl:integer;
+  pat:string;
+  pat2:string;
+begin
+    cant:=0;
+    cantl:=0;
+    a:=nil;
+    al:=nil;
+    pat2:='nada';
+    IniciarV(v);
+    cargarTotal(a,al);
+    writeln('Ingresar patente a Buscar');
+    readln(x);
+    if(a<>nil)then begin
+        pat:=BuscarP(a,x);
+        writeln(pat);
+    end;
+    BuscarPL(al,x,pat2);
+    writeln(pat2);
+    writeln('Ingresar marca a Buscar');
+    readln(x);
+    CantMarca1(a,x,cant);
+    writeln(cant);
+    CantMarca2(al,x,cantl);
+    writeln(cantl);
+    Agrupar(a,v);
+end.

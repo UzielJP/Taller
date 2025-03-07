@@ -1,0 +1,103 @@
+programa EJ3_P2 
+procesos 
+  proceso agrarrarFlor(ES Bolsa:numero) 
+  comenzar  
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor  
+      Bolsa:=Bolsa+1  
+  fin 
+  proceso agarrarPapel(ES Bolsa:numero) 
+  comenzar 
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel 
+      Bolsa:=Bolsa+1 
+  fin 
+areas
+  areapA: AreaPC(1,1,40,1)
+  areapB: AreaPC(1,5,40,5)
+robots
+  robot a1
+  variables
+    Bolsa:numero
+  comenzar
+    Bolsa:=0
+    derecha 
+    repetir 9
+      agarrarPapel(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,A2)
+    Pos(PosAv+11,PosCa)
+    RecibirMensaje(Bolsa,A2)
+    repetir 9
+      agarrarPapel(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,A2)
+  fin
+  robot a2
+  variables
+    Bolsa:numero
+    Bolsa2:numero
+  comenzar
+    RecibirMensaje(Bolsa,A1)
+    derecha
+    repetir 9
+      agarrarPapel(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,A1)
+    Pos(PosAv+11,PosCa)
+    RecibirMensaje(Bolsa,A1)
+    repetir 9
+      agarrarPapel(Bolsa)
+      mover
+    Informar(Bolsa)
+  fin
+  robot b1
+  variables
+    Bolsa:numero
+  comenzar
+    Bolsa:=0
+    derecha
+    repetir 9
+      agrarrarFlor(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,B2)
+    Pos(PosAv+11,PosCa)
+    RecibirMensaje(Bolsa,B2)
+    repetir 9
+      agrarrarFlor(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,B2)
+  fin
+  robot b2
+  variables
+    Bolsa:numero
+    Bolsa2:numero
+  comenzar
+    RecibirMensaje(Bolsa,B1)
+    derecha
+    repetir 9
+      agrarrarFlor(Bolsa)
+      mover
+    EnviarMensaje(Bolsa,B1)
+    Pos(PosAv+11,PosCa)
+    RecibirMensaje(Bolsa,B1)
+    repetir 9
+      agrarrarFlor(Bolsa)
+      mover
+    Informar(Bolsa)
+  fin
+variables
+  A1:a1
+  A2:a2
+  B1:b1
+  B2:b2
+comenzar
+  AsignarArea(A1,areapA)
+  AsignarArea(A2,areapA)
+  AsignarArea(B1,areapB)
+  AsignarArea(B2,areapB)
+  Iniciar(A1,1,1)
+  Iniciar(A2,11,1)
+  Iniciar(B1,1,5)
+  Iniciar(B2,11,5)
+fin

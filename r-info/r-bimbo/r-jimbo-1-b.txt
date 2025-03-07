@@ -1,0 +1,119 @@
+programa ejemTeFollo
+procesos 
+  proceso agarrarflor 
+  comenzar 
+    mover 
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+  fin 
+  proceso dejarflor(E cantF:numero) 
+  comenzar 
+    repetir cantF 
+      depositarFlor 
+  fin 
+  proceso tranportar(E cantF:numero E avenida:numero E calle:numero) 
+  comenzar
+    repetir cantF
+      tomarFlor  
+    BloquearEsquina(avenida,calle) 
+    Pos(avenida,calle) 
+    dejarflor(cantF) 
+    Pos(100,100) 
+    LiberarEsquina(avenida,calle)
+  fin 
+areas
+  areap: AreaP(100,100,100,100)
+  area1: AreaPC(1,1,1,100)
+  area2: AreaPC(2,1,2,100)
+  area3: AreaPC(3,1,3,100)
+robots
+  robot Cliente 
+  variables 
+    cantF:numero 
+    codigo:numero 
+    nombre:numero
+    avenida:numero
+    calle:numero
+  comenzar 
+    RecibirMensaje(nombre,servidor) 
+    mientras(PosCa<100)
+      avenida:=PosAv
+      calle:=PosCa+1
+      Random(cantF,1,4) 
+      EnviarMensaje(nombre,servidor) 
+      EnviarMensaje(cantF,servidor)
+      EnviarMensaje(avenida,servidor)
+      EnviarMensaje(calle,servidor)
+      RecibirMensaje(codigo,servidor) 
+      agarrarflor 
+      mientras((PosCa<100)&(HayFlorEnLaBolsa)) 
+        depositarFlor
+        mover
+      si(PosCa<100)
+        EnviarMensaje(V,servidor)
+      sino
+        EnviarMensaje(F,servidor)        
+  fin 
+  robot Servidor 
+  variables 
+    a:boolean 
+    b:boolean 
+    cont:boolean 
+    d:boolean 
+    cantF:numero 
+    calle:numero 
+    avenida:numero 
+    nombre:numero 
+  comenzar 
+    a:=V 
+    b:=V 
+    cont:=V 
+    d:=V 
+    EnviarMensaje(1,cliente1) 
+    EnviarMensaje(2,cliente2) 
+    EnviarMensaje(3,cliente3) 
+    mientras(cont=V) 
+      RecibirMensaje(nombre,*) 
+      si(nombre=1) 
+        RecibirMensaje(cantF,cliente1) 
+        RecibirMensaje(avenida,cliente1) 
+        RecibirMensaje(calle,cliente1) 
+        tranportar(cantF,avenida,calle)
+        EnviarMensaje(1,cliente1)  
+        RecibirMensaje(a,cliente1)
+      sino 
+        si(nombre=2) 
+          RecibirMensaje(cantF,cliente2) 
+          RecibirMensaje(avenida,cliente2) 
+          RecibirMensaje(calle,cliente2) 
+          tranportar(cantF,avenida,calle)
+          EnviarMensaje(1,cliente2)  
+          RecibirMensaje(b,cliente2)
+        sino  
+          RecibirMensaje(cantF,cliente3) 
+          RecibirMensaje(avenida,cliente3) 
+          RecibirMensaje(calle,cliente3) 
+          tranportar(cantF,avenida,calle)
+          EnviarMensaje(1,cliente3)  
+          RecibirMensaje(d,cliente3) 
+      si((a=F)&(b=F)&(d=F)) 
+        cont:=F 
+  fin 
+variables
+  cliente1:Cliente
+  cliente2:Cliente
+  cliente3:Cliente
+  servidor:Servidor
+comenzar
+  AsignarArea(cliente1,area1)  
+  AsignarArea(cliente2,area2) 
+  AsignarArea(cliente3,area3) 
+  AsignarArea(servidor,areap)
+  AsignarArea(servidor,area1)
+  AsignarArea(servidor,area2)
+  AsignarArea(servidor,area3) 
+  Iniciar(cliente1,1,1) 
+  Iniciar(cliente2,2,1) 
+  Iniciar(cliente3,3,1)
+  Iniciar(servidor,100,100)
+fin

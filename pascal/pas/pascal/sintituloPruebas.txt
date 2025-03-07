@@ -1,0 +1,88 @@
+program uzielprueba;
+type
+
+    registro2=record
+        lima:integer;
+        limo:integer;
+    end;
+
+    lista= ^nodol;
+    
+    nodol=record
+        r:registro2;
+        sig:lista;
+    end;
+
+    registro=record
+        x:integer;
+        y:integer;
+        z:integer;
+    end;
+    
+    arbol= ^nodo;
+    
+    nodo=record
+        r:registro;
+        hi:arbol;
+        hd:arbol;
+        l:lista;
+    end;
+    
+    procedure crearl(var l:lista; r:registro2);
+        begin
+            if(l<>nil)then
+                crearl(l^.sig,r)
+            else begin
+                new(l);
+                l^.r:=r;
+            end;
+        end;
+    
+    procedure creara1(var a:arbol; r:registro);
+        begin
+            if(a<>nil)then begin
+                if(a^.r.x<r.x)then
+                    creara1(a^.hd,r)
+                else begin
+                    creara1(a^.hi,r)
+                end
+            end
+            else begin
+                new(a);
+                a^.r:=r;
+            end;
+        end;
+    
+    procedure creara(var a:arbol);
+        var 
+            i:integer;
+            r:registro;
+            r2:registro2;
+        begin
+            for i:=1 to 4 do begin
+                readln(r.x);
+                readln(r.y);
+                readln(r.z);
+                creara1(a,r);
+                readln(r2.lima);
+                readln(r2.limo);
+                crearl(a^.l,r2);
+            end;
+        end;
+        
+    procedure leer(l:lista);
+        begin
+            if(l<>nil)then begin
+                writeln('lima: ',l^.r.lima);
+                writeln('limo: ',l^.r.limo);
+                leer(l^.sig);
+            end;
+        end;
+    
+var
+    a:arbol;
+begin
+    creara(a);
+    leer(a^.l);
+end.
+

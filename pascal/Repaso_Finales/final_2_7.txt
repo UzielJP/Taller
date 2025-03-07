@@ -1,0 +1,157 @@
+program untitled;
+TYPE
+
+	Reg=record
+		nivel:integer;
+		sector:integer;
+		afectados:integer;
+	end;
+	
+	Lista=^nodol;
+	
+	nodol=record
+		dato:Reg;
+		sig:Lista;
+	end;
+	
+	VectorEmp= array[1..5]of Lista;
+	
+	Arbol=^nodoa;
+	
+	nodoa=record
+		dato:Reg;
+		hi:Arbol;
+		hd:Arbol;
+	end;
+	
+	procedure InsertarOrd(var l:lista; r:Reg);
+	var
+		aux:Lista;
+		ant:Lista;
+		act:lista;
+	begin
+		ant:=l;
+		act:=l;
+		new(aux);
+		aux^.dato:=r;
+		while(act<>nil)and(r.sector>act^.dato.sector)do begin
+			ant:=act;
+			act:=act^.sig;
+		end;
+		if(ant=act)then
+			l:=aux
+		else
+			ant^.sig:=aux;
+		aux^.sig:=act;
+	end;
+	
+	procedure crearA(var a:Arbol; r:Reg);
+	begin
+		if(a<>nil)then begin
+			if(r.afectados<=a^.dato.afectados)then
+				crearA(a^.hi,r)
+			else
+				crearA(a^.hd,r);
+		end
+		else begin
+			new(a);
+			a^.dato:=r;
+			a^.hi:=nil;
+			a^.hd:=nil;
+		end;
+	end;
+	
+	procedure IniciarV(var v:VectorEmp);
+	var
+		i:integer;
+	begin
+		for i:=1 to 5 do
+			v[i]:=nil;
+	end;
+	
+	procedure Leer(var r:Reg);
+	begin
+		r.nivel:=Random(4)+1;
+		r.sector:=Random(49)+1;
+		r.afectados:=Random(100);
+	end;
+	
+	procedure cargarV(var v:VectorEmp);
+	var
+		i:integer;
+		r:Reg;
+	begin
+		for i:=1 to 100 do begin
+			Leer(r);
+			InsertarOrd(v[r.nivel],r);
+		end;
+	end;
+	
+	procedure recorrerL(l:Lista;var a:Arbol);
+	begin
+		while(l<>nil)do begin
+			crearA(a,l^.dato);
+			l:=l^.sig;
+		end;
+	end;
+	
+	procedure cargarA(var a:arbol; v:VectorEmp);
+	var
+		i:integer;
+	begin
+		for i:=1 to 5 do begin
+			recorrerL(v[i],a);
+		end;
+	end;
+	
+	procedure recorrer2(l:Lista);
+	begin
+		while(l<>nil)do begin
+			writeln('Nivel: ',l^.dato.nivel,'. Sector: ',l^.dato.sector,'. Afectados: ',l^.dato.afectados);
+			l:=l^.sig;
+		end;
+	end;
+	
+	procedure informarV(v:VectorEmp);
+	var
+		i:integer;
+	begin
+		for i:= 1 to 5 do begin
+			recorrer2(v[i]);
+		end;
+	end;
+	
+	procedure informar(a:Arbol);
+	begin
+		if(a<>nil)then begin
+			writeln('Nivel: ',a^.dato.nivel,'. Sector: ',a^.dato.sector,'. Afectados: ',a^.dato.afectados);
+			informar(a^.hi);
+			informar(a^.hd);
+		end;
+	end;
+	
+	function Mayor(a:Arbol):integer;
+	begin
+		if(a^.hd<>nil)then
+			Mayor:=Mayor(a^.hd)
+		else
+			Mayor:=a^.dato.afectados;
+	end;
+VAR
+	NumS:integer;
+	num:integer;
+	a:Arbol;
+	v:VectorEmp;
+BEGIN
+	IniciarV(v);
+	cargarV(v);
+	informarV(v);
+	writeln('Ingresar Nivel de importancia');
+	readln(num);
+	recorrerL(v[num],a);
+	informar(a);
+	if(a<>nil)then begin
+		NumS:=Mayor(a);
+		writeln(NumS);
+	end;
+END.

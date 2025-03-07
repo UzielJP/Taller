@@ -1,0 +1,206 @@
+programa ejem3  
+procesos  
+  proceso tomarf   
+  comenzar    
+    si(HayFlorEnLaEsquina)  
+      tomarFlor  
+  fin  
+  proceso tomarp 
+  comenzar  
+    si(HayPapelEnLaEsquina) 
+      tomarPapel  
+  fin  
+  proceso tomarAmbos  
+  comenzar  
+    tomarf  
+    tomarp  
+  fin  
+  proceso dejarf(ES bolsa:boolean) 
+  comenzar    
+    si(HayFlorEnLaBolsa)  
+      tomarFlor  
+    sino 
+      bolsa:=F 
+  fin  
+  proceso dejarp(ES bolsa:boolean)  
+  comenzar    
+    si(HayPapelEnLaBolsa)  
+      tomarPapel  
+    sino 
+      bolsa:=F 
+  fin  
+  proceso dejarAmbos(ES bolsa:boolean) 
+  variables 
+    c:boolean 
+    f:boolean  
+  comenzar  
+    c:=V 
+    f:=V 
+    dejarf(c)  
+    dejarp(f) 
+    si(c=F)&(f=F) 
+      bolsa:=F 
+  fin  
+  proceso recorrerDejarF 
+  variables 
+    bolsa:boolean 
+  comenzar 
+    bolsa:=V 
+    mientras(PosCa<100)&(bolsa=V) 
+      dejarf(bolsa) 
+  fin 
+  proceso recorrerDejarP 
+  variables 
+    bolsa:boolean 
+  comenzar 
+    bolsa:=V 
+    mientras(PosCa<100)&(bolsa=V) 
+      dejarp(bolsa) 
+      mover 
+  fin 
+  proceso recorrerDejarAmbos 
+  variables 
+    bolsa:boolean 
+  comenzar 
+    bolsa:=V 
+    mientras(PosCa<100)&(bolsa=V) 
+      dejarAmbos(bolsa) 
+  fin    
+areas 
+  areaComp: AreaC(1,1,100,100)
+robots 
+  robot robot1 
+  variables 
+    nombre:numero 
+    avenida:numero 
+  comenzar 
+    RecibirMensaje(nombre,robotF) 
+    repetir 4 
+      repetir 6 
+        si(PosAv=5)&(PosCa=8) 
+          BloquearEsquina(5,8)  
+          tomarp  
+          mover  
+          LiberarEsquina(5,8)  
+        sino  
+          si(PosAv=8)&(PosCa=5)  
+            BloquearEsquina(8,5) 
+            tomarp  
+            mover  
+            LiberarEsquina(8,5)  
+          sino  
+            tomarp  
+            mover  
+      derecha  
+    EnviarMensaje(nombre,robotF)  
+    RecibirMensaje(avenida,rebotF)  
+    Pos(avenida,1)  
+    recorrerDejarF  
+  fin 
+  robot robot2 
+  variables 
+    nombre:numero 
+    avenida:numero 
+  comenzar 
+    RecibirMensaje(nombre,robotF) 
+    repetir 4 
+      repetir 10 
+        si(PosAv=9)&(PosCa=15) 
+          BloquearEsquina(9,15) 
+          tomarp 
+          mover 
+          LiberarEsquina(9,15) 
+        sino 
+          si(PosAv=15)&(PosCa=9) 
+            BloquearEsquina(15,9) 
+            tomarp 
+            mover 
+            LiberarEsquina(15,9) 
+          sino 
+            tomarp 
+            mover 
+      derecha 
+    EnviarMensaje(nombre,robotF) 
+    RecibirMensaje(avenida,robotF) 
+    Pos(avenida,1) 
+    recorrerDejarP 
+  fin 
+  robot robot3 
+  variables 
+    nombre:numero 
+    avenida:numero 
+  comenzar 
+    RecibirMensaje(nombre,robotF) 
+    repetir 4 
+      repetir 10
+        si(PosAv=5)&(PosCa=8) 
+          BloquearEsquina(5,8)  
+          tomarf  
+          tomarp  
+          mover  
+          LiberarEsquina(5,8)  
+        sino 
+          si(PosAv=8)&(PosCa=5) 
+            BloquearEsquina(8,5) 
+            tomarf   
+            tomarp   
+            mover  
+            LiberarEsquina(8,5) 
+          sino 
+            si(PosAv=9)&(PosCa=15) 
+              BloquearEsquina(9,15) 
+              tomarf 
+              tomarp 
+              mover 
+              LiberarEsquina(9,15) 
+            sino 
+              si(PosAv=15)&(PosCa=9) 
+                BloquearEsquina(15,9) 
+                tomarf 
+                tomarp 
+                mover 
+                LiberarEsquina(15,9) 
+              sino 
+                tomarf 
+                tomarp 
+                mover 
+      derecha 
+    EnviarMensaje(nombre,robotF)
+    RecibirMensaje(avenida,robotF) 
+    Pos(avenida,1) 
+    recorrerDejarAmbos 
+  fin 
+  robot robotJ 
+  variables 
+    nombre:numero 
+    calle:numero 
+  comenzar 
+    calle:=20 
+    EnviarMensaje(1,robot1F) 
+    EnviarMensaje(2,robot2P) 
+    EnviarMensaje(3,robot3A)
+    repetir 3 
+      RecibirMensaje(nombre,*) 
+      si(nombre=1) 
+        EnviarMensaje(calle,robot1F) 
+      si(nombre=2) 
+        EnviarMensaje(calle,robot2P) 
+      si(nombre=3) 
+        EnviarMensaje(calle,robot3A) 
+      calle:=calle+1     
+  fin 
+variables 
+  robot1F:robot1 
+  robot2P:robot2 
+  robot3A:robot3 
+  robotF:robotJ 
+comenzar 
+  AsignarArea(robot1F,areaComp) 
+  AsignarArea(robot2P,areaComp) 
+  AsignarArea(robot3A,areaComp) 
+  AsignarArea(robotF,areaComp) 
+  Iniciar(robot1F,2,2) 
+  Iniciar(robot2P,9,9) 
+  Iniciar(robot3A,5,5) 
+  Iniciar(robotF,1,1) 
+fin 

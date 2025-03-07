@@ -1,0 +1,88 @@
+programa ejem5
+procesos
+  proceso recogerP(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso recogerF(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso recorrerP(ES bolsa:numero)
+  comenzar
+    mientras(PosCa<100)
+      recogerP(bolsa)
+      mover
+  fin
+  proceso recorrerF(ES bolsa:numero)
+  comenzar
+    mientras(PosCa<100)
+      recogerF(bolsa)
+      mover
+  fin
+areas
+  areaPapel: AreaPC(2,1,3,100)
+  areaFlor: AreaPC(98,1,99,100)
+  areaAfip: AreaP(100,100,100,100)
+robots
+  robot robocop
+  variables
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    recorrerP(bolsa)
+    EnviarMensaje(bolsa,roboJefe)
+  fin
+  robot robocof
+  variables
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    recorrerF(bolsa)
+    EnviarMensaje(bolsa,roboJefe)
+  fin
+  robot roboAfip
+  variables
+    ganador:numero
+    bolsa:numero
+    bolsaA:numero
+    bolsaR:numero
+  comenzar
+    bolsaA:=0
+    bolsaR:=0
+    RecibirMensaje(bolsa,robotA1)
+    bolsaA:=bolsaA+bolsa
+    RecibirMensaje(bolsa,robotA2)
+    bolsaA:=bolsaA+bolsa
+    RecibirMensaje(bolsa,robotR1)
+    bolsaR:=bolsaR+bolsa
+    RecibirMensaje(bolsa,robotR2)
+    bolsaR:=bolsaR+bolsa
+    Informar(bolsaR)
+    si(bolsaA<bolsaR)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+variables
+  robotA1:robocop
+  robotA2:robocop
+  robotR1:robocof
+  robotR2:robocof
+  roboJefe:roboAfip
+comenzar
+  AsignarArea(robotA1,areaPapel)
+  AsignarArea(robotA2,areaPapel)
+  AsignarArea(robotR1,areaFlor)
+  AsignarArea(robotR2,areaFlor)
+  AsignarArea(roboJefe,areaAfip)
+  Iniciar(robotA1,2,1)
+  Iniciar(robotA2,3,1)
+  Iniciar(robotR1,98,1)
+  Iniciar(robotR2,99,1)
+  Iniciar(roboJefe,100,100)
+fin

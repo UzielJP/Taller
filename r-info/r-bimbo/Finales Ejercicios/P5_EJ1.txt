@@ -1,0 +1,102 @@
+programa P5_EJ1
+procesos
+  proceso agarrarFlor(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso agarrarPapel(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+areas
+  AreaF1: AreaP(2,1,2,100)
+  AreaF2: AreaP(3,1,3,100)
+  AreaP1: AreaP(98,1,98,100)
+  AreaP2: AreaP(99,1,99,100)
+  AreaFisc: AreaP(100,100,100,100)
+robots
+  robot Florero
+  variables
+    Id:numero
+    bolsa:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    mientras(PosCa<100)
+      agarrarFlor(bolsa)
+      mover
+    agarrarFlor(bolsa)
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot Papelero
+  variables
+    Id:numero
+    bolsa:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    mientras(PosCa<100)
+      agarrarPapel(bolsa)
+      mover
+    agarrarPapel(bolsa)
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot Servidor
+  variables
+    Id:numero
+    bolsaP:numero
+    bolsaF:numero
+    bolsa:numero
+  comenzar
+    EnviarMensaje(1,F1)
+    EnviarMensaje(2,F2)
+    EnviarMensaje(3,P1)
+    EnviarMensaje(4,P2)
+    bolsaP:=0
+    bolsaF:=0
+    repetir 4
+      RecibirMensaje(Id,*)
+      si(Id=1)
+        RecibirMensaje(bolsa,F1)
+        bolsaF:=bolsaF+bolsa
+      sino
+        si(Id=2)
+          RecibirMensaje(bolsa,F2)
+          bolsaF:=bolsaF+bolsa
+        sino
+          si(Id=3)
+            RecibirMensaje(bolsa,P1)
+            bolsaP:=bolsaP+bolsa
+          sino
+            si(Id=4)
+              RecibirMensaje(bolsa,P2)
+              bolsaP:=bolsaP+bolsa
+    si(bolsaF>bolsaP)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+variables
+  F1:Florero
+  F2:Florero
+  P1:Papelero
+  P2:Papelero
+  Fiscal:Servidor
+comenzar
+  AsignarArea(F1,AreaF1)
+  AsignarArea(F2,AreaF2)
+  AsignarArea(P1,AreaP1)
+  AsignarArea(P2,AreaP2)
+  AsignarArea(Fiscal,AreaFisc)
+  Iniciar(F1,2,1)
+  Iniciar(F2,3,1)
+  Iniciar(P1,98,1)
+  Iniciar(P2,99,1)
+  Iniciar(Fiscal,100,100)
+fin

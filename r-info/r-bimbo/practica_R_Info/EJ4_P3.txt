@@ -1,0 +1,93 @@
+programa EJ4_P3
+procesos
+  proceso agrarrarFlor
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+  fin
+areas
+  areapc: AreaPC(10,10,10,10)
+  areac: AreaC(11,11,11,11)
+  areap1: AreaP(9,9,9,9)
+  areap2: AreaP(9,10,9,10)
+  areap3: AreaP(9,11,9,11)
+  areap4: AreaP(9,12,9,12)
+  areapFisc: AreaP(1,1,1,1)
+robots
+  robot Recolector
+  variables
+    Id:numero
+    fini:numero
+    ActualAv:numero
+    ActualCa:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    fini:=1
+    mientras(fini=1)
+      ActualAv:=PosAv
+      ActualCa:=PosCa
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      si(HayFlorEnLaEsquina)
+        tomarFlor
+        Pos(ActualAv,ActualCa)
+        LiberarEsquina(10,10)
+        BloquearEsquina(11,11)
+        Pos(11,11)
+        depositarFlor
+        Pos(ActualAv,ActualCa)
+        LiberarEsquina(11,11)
+      sino
+        fini:=0
+        Pos(ActualAv,ActualCa)
+        LiberarEsquina(10,10)
+    EnviarMensaje(Id,Fiscal)
+  fin
+  robot Servidor
+  variables
+    Id:numero
+    ActualAv:numero
+    ActualCa:numero
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(4,R4)
+    repetir 4
+      RecibirMensaje(Id,*)
+    Informar(Id)
+    ActualAv:=PosAv
+    ActualCa:=PosCa
+    BloquearEsquina(11,11)
+    Pos(11,11)
+    agrarrarFlor
+    Pos(ActualAv,ActualCa)
+    LiberarEsquina(11,11)
+  fin
+variables
+  R1:Recolector
+  R2:Recolector
+  R3:Recolector
+  R4:Recolector
+  Fiscal:Servidor
+comenzar
+  AsignarArea(R1,areap1)
+  AsignarArea(R1,areac)
+  AsignarArea(R1,areapc)
+  AsignarArea(R2,areap2)
+  AsignarArea(R2,areac)
+  AsignarArea(R2,areapc)
+  AsignarArea(R3,areap3)
+  AsignarArea(R3,areac)
+  AsignarArea(R3,areapc)
+  AsignarArea(R4,areap4)
+  AsignarArea(R4,areac)
+  AsignarArea(R4,areapc)
+  AsignarArea(Fiscal,areapFisc)
+  AsignarArea(Fiscal,areac)
+  Iniciar(Fiscal,1,1)
+  Iniciar(R1,9,9)
+  Iniciar(R2,9,10)
+  Iniciar(R3,9,11)
+  Iniciar(R4,9,12)
+fin

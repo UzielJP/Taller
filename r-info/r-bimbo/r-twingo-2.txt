@@ -1,0 +1,155 @@
+programa ejemp2 
+procesos 
+  proceso vuelta 
+  comenzar   
+    repetir 3  
+      derecha  
+  fin 
+  proceso moverA(E escalon:numero) 
+  comenzar 
+    repetir escalon 
+      mover 
+    vuelta 
+  fin 
+  proceso moverB(E escalon:numero) 
+  comenzar   
+    repetir escalon 
+      mover 
+    derecha 
+  fin 
+  proceso recorrerA(ES escalon:numero) 
+  comenzar 
+    moverA(escalon) 
+    moverB(escalon) 
+  fin 
+  proceso recorrerB(ES escalon:numero) 
+  comenzar 
+    moverB(escalon) 
+    moverA(escalon) 
+  fin 
+areas 
+  areac: AreaC(1,1,100,100) 
+robots 
+  robot robot1 
+  variables 
+    escalon:numero 
+  comenzar 
+    escalon:=5 
+    repetir 5 
+      recorrerA(escalon) 
+      escalon:=escalon-1 
+    BloquearEsquina(16,16)
+    LiberarEsquina(16,16)
+    repetir 5 
+      escalon:=escalon+1 
+      recorrerB(escalon) 
+  fin 
+  robot robot2 
+  variables 
+    escalon:numero 
+  comenzar 
+    escalon:=5 
+    repetir 5 
+      recorrerB(escalon) 
+      escalon:=escalon-1 
+    repetir 5 
+      escalon:=escalon+1 
+      recorrerA(escalon) 
+  fin 
+variables 
+  robot1A:robot1 
+  robot2B:robot2 
+comenzar 
+  AsignarArea(robot2B,areac) 
+  AsignarArea(robot1A,areac) 
+  Iniciar(robot2B,1,1) 
+  Iniciar(robot1A,31,1) 
+fin 
+
+3-2-b)
+programa ejemp2  
+procesos  
+  proceso vuelta  
+  comenzar    
+    repetir 3   
+      derecha   
+  fin  
+  proceso moverA(E escalon:numero)  
+  comenzar  
+    repetir escalon  
+      mover  
+    vuelta  
+  fin  
+  proceso moverB(E escalon:numero)  
+  comenzar    
+    repetir escalon  
+      mover  
+    derecha  
+  fin  
+  proceso recorrerA(ES escalon:numero)  
+  comenzar  
+    moverA(escalon)  
+    moverB(escalon)  
+  fin  
+  proceso recorrerB(ES escalon:numero)  
+  comenzar  
+    moverB(escalon)  
+    moverA(escalon)  
+  fin  
+areas  
+  areac: AreaC(1,1,100,100)  
+robots  
+  robot robot1  
+  variables  
+    escalon:numero  
+  comenzar  
+    escalon:=5  
+    repetir 4  
+      recorrerA(escalon)  
+      escalon:=escalon-1  
+    derecha
+    BloquearEsquina(15,15)
+    mover
+    derecha
+    derecha
+    mover 
+    LiberarEsquina(15,15) 
+    repetir 4  
+      escalon:=escalon+1  
+      recorrerB(escalon)  
+  fin  
+  robot robot2  
+  variables  
+    escalon:numero  
+  comenzar  
+    escalon:=5  
+    repetir 4  
+      recorrerB(escalon)  
+      escalon:=escalon-1
+    mover
+    derecha
+    BloquearEsquina(15,15)
+    mover
+    derecha
+    derecha
+    mover
+    LiberarEsquina(15,15)
+    mover
+    mover 
+    derecha
+    repetir 4    
+      recorrerA(escalon)
+      escalon:=escalon+1
+  fin  
+variables  
+  robot1A:robot1  
+  robot2B:robot2  
+comenzar  
+  AsignarArea(robot2B,areac)  
+  AsignarArea(robot1A,areac)  
+  Iniciar(robot2B,1,1)  
+  Iniciar(robot1A,31,1)  
+fin  
+
+  Iniciar(robot1A,32,1) 
+fin 

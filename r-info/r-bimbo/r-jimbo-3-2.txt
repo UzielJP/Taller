@@ -1,0 +1,58 @@
+programa ejem43
+procesos
+  proceso recorrer(E codigo:numero)
+  comenzar
+    repetir codigo
+      si(HayFlorEnLaEsquina)
+        tomarFlor
+    mover
+  fin
+areas
+  area1: AreaP(1,1,1,100)
+  area2: AreaP(2,1,2,100)
+  area3: AreaP(3,1,3,100)
+  areaJ: AreaP(100,100,100,100)
+robots
+  robot roboto
+  variables
+    nombre:numero
+    codigo:numero
+  comenzar
+    RecibirMensaje(nombre,jefeF)
+    mientras(PosCa<100)
+      Random(codigo,1,5)
+      si(nombre=1)
+        EnviarMensaje(1,robot2)
+        EnviarMensaje(2,robot3)
+      sino
+        si(nombre=2)
+          EnviarMensaje(1,robot1)
+          EnviarMensaje(2,robot3)
+        sino
+          EnviarMensaje(1,robot1)
+          EnviarMensaje(2,robot2)
+      recorrer(codigo)
+      repetir 2
+        RecibirMensaje(codigo,*) 
+  fin
+  robot  jefe
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+  fin
+variables
+  robot1:roboto
+  robot2:roboto
+  robot3:roboto
+  jefeF:jefe
+comenzar
+  AsignarArea(robot1,area1)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot3,area3)
+  AsignarArea(jefeF,areaJ)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,2,1)
+  Iniciar(robot3,3,1)
+  Iniciar(jefeF,100,100)
+fin

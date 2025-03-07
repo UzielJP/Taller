@@ -1,0 +1,120 @@
+programa EJ3_P3
+procesos
+  proceso agarrarPapel(ES Fini:numero)
+  comenzar
+    si(HayPapelEnLaEsquina)
+      tomarPapel
+      Fini:=1
+    sino
+      Fini:=0
+  fin
+areas
+  areapc: AreaPC(2,2,10,10)
+  areap1: AreaP(2,1,2,1)
+  areap2: AreaP(3,1,3,1)
+  areap3: AreaP(4,1,4,1)
+  areap4: AreaP(5,1,5,1)
+  areapFisc: AreaP(1,1,1,1)
+robots
+  robot Racer
+  variables
+    Id:numero
+    fini:numero
+    bolsa:numero
+    ActualCa:numero
+    ActualAv:numero
+    Avenida:numero
+    Calle:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    RecibirMensaje(Avenida,Fiscal)
+    RecibirMensaje(Calle,Fiscal)
+    fini:=1
+    bolsa:=0
+    mientras(fini=1)
+      ActualCa:=PosCa
+      ActualAv:=PosAv
+      BloquearEsquina(Avenida,Calle)
+      Pos(Avenida,Calle)
+      si(HayFlorEnLaEsquina) 
+        tomarFlor
+        bolsa:=bolsa+1
+      sino
+        fini:=0
+      Pos(ActualAv,ActualCa)
+      LiberarEsquina(Avenida,Calle)
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot Servidor
+  variables
+    Id:numero
+    ganador:numero
+    calle:numero
+    avenida:numero
+    Bolsa1:numero
+    Bolsa2:numero
+    Bolsa3:numero
+    Bolsa4:numero
+  comenzar
+    Random(avenida,2,10)
+    Random(calle,2,10)
+    EnviarMensaje(1,R1)
+    EnviarMensaje(avenida,R1)
+    EnviarMensaje(calle,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(avenida,R2)
+    EnviarMensaje(calle,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(avenida,R3)
+    EnviarMensaje(calle,R3)
+    EnviarMensaje(4,R4)
+    EnviarMensaje(avenida,R4)
+    EnviarMensaje(calle,R4)
+    repetir 4
+      RecibirMensaje(Id,*)
+      si(Id=1)
+        RecibirMensaje(Bolsa1,R1)
+      sino
+        si(Id=2)
+          RecibirMensaje(Bolsa2,R2)
+        sino
+          si(Id=3)
+            RecibirMensaje(Bolsa3,R3)
+          sino
+            RecibirMensaje(Bolsa4,R4)
+    si(Bolsa1>Bolsa2)&(Bolsa1>Bolsa3)&(Bolsa1>Bolsa4)
+      ganador:=1
+    sino
+      si(Bolsa2>Bolsa1)&(Bolsa2>Bolsa3)&(Bolsa2>Bolsa4)
+        ganador:=2
+      sino
+        si(Bolsa3>Bolsa1)&(Bolsa3>Bolsa2)&(Bolsa3>Bolsa4)
+          ganador:=3
+        sino
+          si(Bolsa4>Bolsa1)&(Bolsa4>Bolsa2)&(Bolsa4>Bolsa3)
+            ganador:=4
+    Informar(ganador)   
+  fin
+variables
+  R1:Racer
+  R2:Racer
+  R3:Racer
+  R4:Racer
+  Fiscal:Servidor
+comenzar
+  AsignarArea(R1,areap1)
+  AsignarArea(R1,areapc)
+  AsignarArea(R2,areap2)
+  AsignarArea(R2,areapc)
+  AsignarArea(R3,areap3)
+  AsignarArea(R3,areapc)
+  AsignarArea(R4,areap4)
+  AsignarArea(R4,areapc)
+  AsignarArea(Fiscal,areapFisc)
+  Iniciar(Fiscal,1,1)
+  Iniciar(R1,2,1)
+  Iniciar(R2,3,1)
+  Iniciar(R3,4,1)
+  Iniciar(R4,5,1)
+fin

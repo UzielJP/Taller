@@ -1,0 +1,98 @@
+programa EJ1_P3
+procesos
+  proceso agarrarPapel(ES bolsa:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsa:=bolsa+1
+  fin
+  proceso agarrarFlor(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+areas
+  areapcF: AreaPC(1,1,5,10)
+  areapcP: AreaPC(6,1,10,9)
+  areac: AreaC(10,10,10,10)
+  areap1: AreaP(6,10,6,10)
+  areap2: AreaP(7,10,7,10)
+  areap3: AreaP(8,10,8,10)
+  areap4: AreaP(9,10,9,10)
+robots
+  robot Florero
+  variables
+    calle:numero
+    avenida:numero
+    ActualCa:numero
+    ActualAv:numero
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    ActualCa:=PosCa
+    ActualAv:=PosAv
+    repetir 5
+      Random(avenida,1,5)
+      Random(calle,1,10)
+      BloquearEsquina(avenida,calle)
+      Pos(avenida,calle)
+      agarrarFlor(bolsa)
+      Pos(ActualAv,ActualCa)
+      LiberarEsquina(avenida,calle)
+    repetir bolsa
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarFlor
+      Pos(ActualAv,ActualCa)
+      LiberarEsquina(10,10)
+  fin
+  robot Papelero
+  variables
+    calle:numero
+    avenida:numero
+    ActualCa:numero
+    ActualAv:numero
+    bolsa:numero
+  comenzar
+    bolsa:=0
+    ActualCa:=PosCa
+    ActualAv:=PosAv
+    repetir 5
+      Random(avenida,6,10)
+      Random(calle,1,9)
+      BloquearEsquina(avenida,calle)
+      Pos(avenida,calle)
+      agarrarPapel(bolsa)
+      Pos(ActualAv,ActualCa)
+      LiberarEsquina(avenida,calle)
+    repetir bolsa
+      BloquearEsquina(10,10)
+      Pos(10,10)
+      depositarPapel
+      Pos(ActualAv,ActualCa)
+      LiberarEsquina(10,10)
+  fin
+variables
+  R1:Florero
+  R2:Florero
+  R3:Papelero
+  R4:Papelero
+comenzar
+  AsignarArea(R1,areap1)
+  AsignarArea(R1,areapcF)
+  AsignarArea(R1,areac)
+  AsignarArea(R2,areap2)
+  AsignarArea(R2,areapcF)
+  AsignarArea(R2,areac)
+  AsignarArea(R3,areap3)
+  AsignarArea(R3,areapcP)
+  AsignarArea(R3,areac)
+  AsignarArea(R4,areap4)
+  AsignarArea(R4,areapcP)
+  AsignarArea(R4,areac)
+  Iniciar(R1,6,10)
+  Iniciar(R2,7,10)
+  Iniciar(R3,8,10)
+  Iniciar(R4,9,10)
+fin

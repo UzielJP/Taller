@@ -1,0 +1,125 @@
+programa final1_2
+areas
+robots
+  robot EsconderF
+  variables
+    av:numero
+    ca:numero
+    Id:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    repetir 2
+      Random(av,1,5)
+      Random(ca,1,5)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      depositarFlor
+      Pos(6,1)
+      LiberarEsquina(av,ca)
+    EnviarMensaje(Id,Fiscal)
+  fin
+  robot EsconderP
+  variables
+    av:numero
+    ca:numero
+    Id:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    repetir 2
+      Random(av,1,5)
+      Random(ca,1,5)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      depositarPapel
+      Pos(6,3)
+      LiberarEsquina(av,ca)
+    EnviarMensaje(Id,Fiscal)
+  fin
+  robot BuscarF
+  variables
+    Id:numero
+    cont:numero
+    bolsa:numero
+    av:numero
+    ca:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsa:=0
+    cont:=0
+    mientras(cont=0)
+	  RecibirMensaje(cont,Fiscal)
+	  si(cont=0)
+        Random(av,1,5)
+        Random(ca,1,5)
+        BloquearEsquina(av,ca)
+        Pos(av,ca)
+        si(HayPapelEnLaEsquina)
+          tomarPapel
+          bolsa:=bolsa+1
+        Pos(6,2)
+        LiberarEsquina(av,ca)
+        EnviarMensaje(Id,Fiscal)
+        EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot BuscarP
+  variables
+    Id:numero
+    cont:numero
+    bolsa:numero
+    av:numero
+    ca:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    cont:=0
+    bolsa:=0
+    mientras(cont=0)
+      RecibirMensaje(cont,Fiscal)
+      si(cont=0)
+        Random(av,1,5)
+        Random(ca,1,5)
+        BloquearEsquina(av,ca)
+        Pos(av,ca)
+        si(HayPapelEnLaEsquina)
+          tomarFlor
+          bolsa:=bolsa+1
+        Pos(6,4)
+        LiberarEsquina(av,ca)
+        EnviarMensaje(Id,Fiscal)
+        EnviarMensaje(bolsa,Fiscal)
+  fin
+  robot Coordinar
+  variables
+    Id:numero
+    BolsaP:numero
+    BolsaF:numero
+    bolsa:numero
+  comenzar
+    EnviarMensaje(1,F1)
+    EnviarMensaje(2,F2)
+    EnviarMensaje(3,P1)
+    EnviarMensaje(4,P2)
+    repetir 2
+      RecibirMensaje(Id,*)
+    BolsaP:=0
+    BolsaF:=0
+    mientras(BolsaP<2)&(BolsaF<2)
+      EnviarMensaje(0,F2)
+      EnviarMensaje(0,P2)
+      repetir 2
+        RecibirMensaje(Id,*)
+        si(Id=2)
+          RecibirMensaje(bolsa,F2)
+          BolsaF:=BolsaF+bolsa
+        sino
+          RecibirMensaje(bolsa,P2)
+          BolsaP:=BolsaP+bolsa
+    EnviarMensaje(1,F2)
+    EnviarMensaje(1,P2)
+    si(BolsaF<BolsaP)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+vraibles
+comenzar
+fin

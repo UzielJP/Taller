@@ -1,0 +1,103 @@
+programa EJ1_P5
+procesos
+  proceso agarrarPapel(ES bolsaP:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsaP:=bolsaP+1
+  fin
+  proceso agarrarFlor(ES bolsaF:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsaF:=bolsaF+1
+  fin
+areas
+  areaFiscal: AreaP(1,1,1,1)
+  areapR1: AreaP(2,1,2,100)
+  areapR2: AreaP(3,1,3,100)
+  areapA1: AreaP(98,1,98,100)
+  areapA2: AreaP(99,1,99,100)
+robots
+  robot Rojo
+  variables
+    bolsaF:numero
+    Id:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsaF:=0
+    mientras(PosCa<100)
+      agarrarFlor(bolsaF)
+      mover
+    agarrarFlor(bolsaF)
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(bolsaF,Fiscal)
+  fin
+  robot Azul
+  variables
+    Id:numero
+    bolsaP:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    bolsaP:=0
+    mientras(PosCa<100)
+      agarrarPapel(bolsaP)
+      mover
+    agarrarPapel(bolsaP)
+    EnviarMensaje(Id,Fiscal)
+    EnviarMensaje(bolsaP,Fiscal)
+  fin
+  robot servidor
+  variables
+    bolsaP:numero
+    bolsaF:numero
+    bolsaTemporal:numero
+    ganador:numero
+    Id:numero
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,A1)
+    EnviarMensaje(4,A2)
+    bolsaP:=0
+    bolsaF:=0
+    repetir 4
+      RecibirMensaje(Id,*)
+      si(Id=1)
+        RecibirMensaje(bolsaTemporal,R1)
+        bolsaF:=bolsaF+bolsaTemporal
+      sino
+        si(Id=2)
+          RecibirMensaje(bolsaTemporal,R2)
+          bolsaF:=bolsaF+bolsaTemporal
+        sino
+          si(Id=3)
+            RecibirMensaje(bolsaTemporal,A1)
+            bolsaP:=bolsaP+bolsaTemporal
+          sino
+            RecibirMensaje(bolsaTemporal,A2)
+            bolsaP:=bolsaP+bolsaTemporal
+    si(bolsaF>bolsaP)
+      ganador:=1
+    sino
+      ganador:=2
+    Informar(ganador)
+  fin
+variables
+  R1:Rojo
+  R2:Rojo
+  A1:Azul
+  A2:Azul
+  Fiscal:servidor
+comenzar
+  AsignarArea(R1,areapR1)
+  AsignarArea(R2,areapR2)
+  AsignarArea(A1,areapA1)
+  AsignarArea(A2,areapA2)
+  AsignarArea(Fiscal,areaFiscal)
+  Iniciar(R1,2,1)
+  Iniciar(R2,3,1)
+  Iniciar(A1,98,1)
+  Iniciar(A2,99,1)
+  Iniciar(Fiscal,1,1)
+fin

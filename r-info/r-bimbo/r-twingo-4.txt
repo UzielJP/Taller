@@ -1,0 +1,92 @@
+programa ejem3 
+procesos 
+  proceso hayflor 
+  comenzar 
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+  fin  
+areas 
+  areacomp: AreaPC(10,10,11,11)
+  area1: AreaP(9,9,9,9)
+  area2: AreaP(9,10,9,10)
+  area3: AreaP(9,11,9,11)
+  area4: AreaP(9,12,9,12) 
+  areaJ: AreaP(1,1,1,1) 
+robots 
+  robot roboto 
+  variables 
+    c:boolean 
+    calleI:numero 
+    avenidaI:numero 
+    nombre:numero  
+  comenzar 
+    c:=F 
+    avenidaI:=PosAv 
+    calleI:=PosCa 
+    RecibirMensaje(nombre,jefeF) 
+    mientras(c=F) 
+      BloquearEsquina(10,10) 
+      Pos(10,10) 
+      si(HayFlorEnLaEsquina) 
+        tomarFlor 
+        BloquearEsquina(11,11) 
+        depositarFlor 
+        LiberarEsquina(11,11) 
+      sino 
+        EnviarMensaje(nombre,jefeF) 
+      Pos(avenidaI,calleI) 
+      LiberarEsquina(10,10) 
+      RecibirMensaje(c,jefeF) 
+    si(c=V) 
+      Pos(11,11) 
+      hayflor 
+  fin 
+  robot jefe 
+  variables 
+    nombre:numero 
+  comenzar 
+    EnviarMensaje(1,robot1) 
+    EnviarMensaje(2,robot2)  
+    EnviarMensaje(3,robot3) 
+    EnviarMensaje(4,robot4)
+    repetir 4
+      RecibirMensaje(nombre,*)
+    si(nombre=1)
+      EnviarMensaje(V,robot1)
+    sino
+      EnviarMensaje(F,robot1) 
+    si(nombre=2) 
+      EnviarMensaje(V,robot2)
+    sino
+      EnviarMensaje(F,robot2) 
+    si(nombre=3) 
+      EnviarMensaje(V,robot3)
+    sino
+      EnviarMensaje(F,robot3) 
+    si(nombre=4) 
+      EnviarMensaje(V,robot4)
+    sino
+      EnviarMensaje(F,robot4) 
+  fin 
+variables 
+  robot1:roboto 
+  robot2:roboto 
+  robot3:roboto 
+  robot4:roboto 
+  jefeF:jefe 
+comenzar 
+  AsignarArea(robot1,area1) 
+  AsignarArea(robot1,areacomp) 
+  AsignarArea(robot2,area2) 
+  AsignarArea(robot2,areacomp) 
+  AsignarArea(robot3,area3) 
+  AsignarArea(robot3,areacomp) 
+  AsignarArea(robot4,area4) 
+  AsignarArea(robot4,areacomp) 
+  AsignarArea(jefeF,areaJ) 
+  Iniciar(jefeF,1,1) 
+  Iniciar(robot1,9,9) 
+  Iniciar(robot2,9,10) 
+  Iniciar(robot3,9,11) 
+  Iniciar(robot4,9,12) 
+fin 

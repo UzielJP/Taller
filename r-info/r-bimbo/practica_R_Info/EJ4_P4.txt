@@ -1,0 +1,108 @@
+programa EJ4_P4
+procesos
+  proceso agarrarPapel(ES bolsaP:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      bolsaP:=bolsaP+1
+  fin
+  proceso agarrarFlor(ES bolsaF:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsaF:=bolsaF+1
+  fin
+  proceso depositarP(ES bolsaP:numero)
+  comenzar
+    repetir bolsaP
+      depositarPapel
+      bolsaP:=bolsaP-1
+  fin
+  proceso depositarF(ES bolsaF:numero)
+  comenzar
+    repetir bolsaF
+      depositarFlor
+      bolsaF:=bolsaF-1
+  fin
+areas
+  areapPC: AreaPC(2,2,100,100)
+  areaP1: AreaP(2,1,2,1)
+  areaP2: AreaP(3,1,3,1)
+  areapM: AreaP(1,1,1,1)
+robots
+  robot esclavo
+  variables
+    bolsaP:numero
+    bolsaF:numero
+    orden:numero
+    papel:numero
+    avenida:numero
+    calle:numero
+    ActAv:numero
+    ActCa:numero
+  comenzar
+    RecibirMensaje(orden,Master)
+    bolsaP:=0
+    bolsaF:=0
+    ActAv:=PosAv
+    ActCa:=PosCa
+    mientras(orden<>4)
+      si(orden<>4)    
+        RecibirMensaje(avenida,Master)
+        RecibirMensaje(calle,Master)
+        BloquearEsquina(avenida,calle)
+        Pos(avenida,calle)
+        si(orden=1)
+          agarrarFlor(bolsaF)
+        sino
+          si(orden=2)
+            agarrarPapel(bolsaP)
+          sino
+            si(orden=3)
+              depositarP(bolsaP)
+              depositarF(bolsaF)
+      Pos(ActAv,ActCa)
+      LiberarEsquina(avenida,calle)
+      EnviarMensaje(1,Master)
+      RecibirMensaje(orden,Master)
+    Informar(orden)
+  fin
+  robot maestro
+  variables
+    orden:numero
+    num:numero
+    trabajador:numero
+    avenida:numero
+    calle:numero
+    Slave:numero
+  comenzar
+    repetir 10
+      Random(Slave,1,2)
+      Random(orden,1,4)
+      Random(avenida,2,100)
+      Random(calle,2,100)
+      si(Slave=1)
+        EnviarMensaje(orden,Slave1)
+        EnviarMensaje(avenida,Slave1)
+        EnviarMensaje(calle,Slave1)
+      sino
+        EnviarMensaje(orden,Slave2)
+        EnviarMensaje(avenida,Slave2)
+        EnviarMensaje(calle,Slave2)
+    EnviarMensaje(4,Slave1)
+    EnviarMensaje(4,Slave2)
+  fin
+variables
+  Slave1:esclavo
+  Slave2:esclavo
+  Master:maestro
+comenzar
+  AsignarArea(Slave1,areaP1)
+  AsignarArea(Slave1,areapPC)
+  AsignarArea(Slave2,areaP2)
+  AsignarArea(Slave2,areapPC)
+  AsignarArea(Master,areapM)
+  Iniciar(Slave1,2,1)
+  Iniciar(Slave2,3,1)
+  Iniciar(Master,1,1)
+fin

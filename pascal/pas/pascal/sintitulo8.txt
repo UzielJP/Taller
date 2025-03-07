@@ -1,0 +1,217 @@
+program uziel7;
+type
+    
+    stock=record
+        marca:integer;
+        modelo:integer;
+        patente:integer;
+        anoFabri:integer;
+    end;
+    
+    arbol= ^nodoA;
+    
+    nodoA=record
+        dato:stock;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    lista= ^nodoL;
+    
+    nodoL=record
+        r:stock;
+        sig:lista;
+    end;
+    
+    info=record
+        marca:integer;
+        sig:lista;
+    end;
+    
+    arboList= ^nodoList;
+    
+    nodoList=record
+        dato:info;
+        hi:arboList;
+        hd:arboList;
+    end;
+    
+    vectorl= array [1..18] of lista;
+    
+    procedure crearA(var a:arbol; r:stock);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.patente>r.patente)then
+                    crearA(a^.hi,r)
+                else
+                    crearA(a^.hd,r)
+            end
+            else begin
+                new(a);
+                a^.dato:=r;
+                a^.hi:=nil;
+                a^.hd:=nil;
+            end;
+             writeln('codigo a1:');
+        end;
+        
+    procedure crearL(var l:lista; r:stock);
+        begin
+            if(l<>nil)then 
+                crearL(l^.sig,r)
+            else begin
+                new(l);
+                l^.r:=r;
+                l^.sig:=nil;
+            end;
+            writeln('codigo L1:');
+        end;
+        
+    procedure crearAL(var a:arboList; r:stock);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.marca=r.marca)then begin
+                    crearL(a^.dato.sig,r);
+                     writeln('codigo Al3:')
+                end
+                else begin
+                    if(a^.dato.marca>r.marca)then
+                        crearAL(a^.hi,r)
+                    else
+                        crearAL(a^.hd,r)
+                end
+            end
+            else begin
+                new(a);
+                a^.dato.marca:=r.marca;
+                crearL(a^.dato.sig,r);
+                 writeln('codigo AL2:');
+            end;
+            writeln('codigo AL1:');
+        end;
+        
+    procedure cantAutos(a:arbol; v:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.marca=v)then 
+                    cant:=cant+1;
+                cantAutos(a^.hi,v,cant);
+                cantAutos(a^.hd,v,cant);
+            end;
+        end;
+        
+    procedure recorrerL(l:lista; var cant:integer);
+        begin
+            while(l<>nil)do begin
+                cant:=cant+1;
+                l:=l^.sig;
+            end;
+        end;
+        
+    procedure cantAutos2(a:arboList; v:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.marca=v)then
+                    recorrerL(a^.dato.sig,cant)
+                else begin
+                    if(a^.dato.marca>v)then 
+                        cantAutos2(a^.hi,v,cant)
+                    else
+                        cantAutos2(a^.hd,v,cant)
+                end;
+            end;
+        end;
+        
+    procedure agrupadoV(a:arbol; var v:vectorl);
+        begin
+            if(a<>nil)then begin
+                crearL(v[a^.dato.anoFabri],a^.dato);
+                agrupadoV(a^.hi,v);
+                agrupadoV(a^.hd,v);
+                 writeln('codigo v:');
+            end;
+        end;
+        
+    procedure buscarP(a:arbol; patente:integer; var modelo:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.patente=patente)then
+                    modelo:=a^.dato.modelo
+                else begin
+                    if(a^.dato.patente>patente)then 
+                        buscarP(a^.hi,patente,modelo)
+                    else
+                        buscarP(a^.hd,patente,modelo)
+                end;
+            end;
+        end;
+        
+    procedure recorrerL2(l:lista; patente:integer; var modelo:integer);
+        begin
+            if(l<>nil)then begin
+                if(l^.r.patente=patente)then
+                    modelo:=l^.r.modelo;
+            end;
+        end;
+        
+    procedure buscarP2(a:arboList; patente:integer; var modelo:integer);
+        begin
+            if(a<>nil)then begin
+                recorrerL2(a^.dato.sig,patente,modelo);
+                buscarP2(a^.hi,patente,modelo);
+                buscarP2(a^.hd,patente,modelo);
+            end;
+        end;
+        
+    procedure cargarDatos(var a1:arbol; var a2:arboList);
+        var 
+            r:stock;
+        begin
+            writeln('patente:');
+            readln(r.patente);
+            while(r.patente<>-1)do begin
+                writeln('modelo:');
+                readln(r.modelo);
+                writeln('marca:');
+                readln(r.marca);
+                writeln('año fabricacion:');
+                readln(r.anoFabri);
+                crearA(a1,r);
+                crearAL(a2,r);
+                writeln('patente de nuevo:');
+                readln(r.patente);
+            end;
+        end;
+var
+    v:vectorl;
+    a1:arbol;
+    a2:arboList;
+    cod:integer;
+    cant:integer;
+    cant2:integer;
+    modelo:integer;
+    patente:integer;
+begin
+    a1:=nil;
+    a2:=nil;
+    cant:=0;
+    cant2:=0;
+    cargarDatos(a1,a2);
+    agrupadoV(a1,v);
+    writeln('codigo 1:');
+    readln(cod);
+    cantAutos(a1,cod,cant);
+    writeln(cant);
+    writeln('codigo 2:');
+    readln(cod);
+    cantAutos2(a2,cod,cant2);
+    writeln(cant2);
+    writeln('codigo patente 1:');
+    readln(patente);
+    buscarP(a1,patente,modelo);
+    writeln(modelo);
+    writeln('codigo patente 2:');
+    readln(patente);
+    buscarP2(a2,patente,modelo);
+    writeln(modelo);
+end.

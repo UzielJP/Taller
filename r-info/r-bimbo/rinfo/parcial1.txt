@@ -1,0 +1,137 @@
+programa uziel5
+procesos
+  proceso vuelta
+  comenzar
+    repetir 2
+      derecha
+  fin
+  proceso juntarF(ES bolsa:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      bolsa:=bolsa+1
+  fin
+  proceso dejarF(E bolsa:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir bolsa
+      BloquearEsquina(20,20)
+      Pos(20,20)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(20,20)
+  fin
+areas
+  area1: AreaP(1,1,1,10)
+  areaP1: AreaP(1,11,11,11)
+  area2: AreaP(11,1,11,10)
+  areaP2: AreaP(2,1,11,1)
+  area3: AreaP(13,1,13,10)
+  areaP3: AreaP(13,11,23,11)
+  area4: AreaP(23,1,23,10)
+  areaP4: AreaP(14,1,23,1)
+  areaFisc: AreaP(30,1,30,1)
+  areaComp: AreaPC(20,20,20,20)
+robots
+  robot floreroSup
+  variables
+    nombre:numero
+    bolsa:numero
+    bolsat:numero
+  comenzar
+    RecibirMensaje(nombre,fiscal)
+    bolsa:=0
+    bolsat:=0
+    repetir 2
+      repetir 10
+        juntarF(bolsa)
+        mover
+      derecha
+    bolsat:=bolsat+bolsa
+    dejarF(bolsa)
+    si(nombre=1)
+      EnviarMensaje(bolsat,robot2)
+    sino
+      EnviarMensaje(bolsat,robot4)
+  fin
+  robot floreroInf
+  variables
+    nombre:numero
+    bolsa:numero
+    bolsat:numero
+  comenzar
+    RecibirMensaje(nombre,fiscal)
+    bolsa:=0
+    si(nombre=2)
+      RecibirMensaje(bolsat,robot1)
+    sino
+      RecibirMensaje(bolsat,robot3)
+    vuelta
+    repetir 2
+      repetir 9
+        juntarF(bolsa)
+        mover
+      derecha
+    bolsat:=bolsat+bolsa
+    dejarF(bolsa)
+    EnviarMensaje(nombre,fiscal)
+    EnviarMensaje(bolsat,fiscal)
+  fin
+  robot fical
+  variables
+    nombre:numero
+    bolsaA:numero
+    bolsaB:numero
+    bolsa:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(4,robot4)
+    bolsaA:=0
+    bolsaB:=0
+    repetir 2
+      RecibirMensaje(nombre,*)
+      si(nombre=2)
+        RecibirMensaje(bolsa,robot2)
+        bolsaA:=bolsaA+bolsa
+      sino
+        RecibirMensaje(bolsa,robot4)
+        bolsaB:=bolsaB+bolsa
+    si(bolsaA>bolsaB)
+      Informar(1)
+      Informar(bolsaA)
+    sino
+      Informar(2)
+      Informar(bolsaB)
+  fin
+variables
+  robot1:floreroSup
+  robot2:floreroInf
+  robot3:floreroSup
+  robot4:floreroInf
+  fiscal:fical
+comenzar
+  AsignarArea(robot1,area1)
+  AsignarArea(robot1,areaP1)
+  AsignarArea(robot1,areaComp)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot2,areaP2)
+  AsignarArea(robot2,areaComp)
+  AsignarArea(robot3,area3)
+  AsignarArea(robot3,areaP3)
+  AsignarArea(robot3,areaComp)
+  AsignarArea(robot4,area4)
+  AsignarArea(robot4,areaP4)
+  AsignarArea(robot4,areaComp)
+  AsignarArea(fiscal,areaFisc)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,11,10)
+  Iniciar(robot3,13,1)
+  Iniciar(robot4,23,10)
+  Iniciar(fiscal,30,1)
+fin

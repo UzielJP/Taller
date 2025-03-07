@@ -1,0 +1,170 @@
+program Final_6_2;
+type
+	Reg=record
+		dni:integer;
+		nombre:string;
+		tiempo:real;
+	end;
+	
+	lista=^nodol;
+	
+	nodol=record
+		dato:reg;
+		sig:lista;
+	end;
+	
+	arbol=^nodoa;
+	
+	nodoa=record
+		dato:Reg;
+		hi:arbol;
+		hd:arbol;
+	end;
+	
+	procedure LeerA(var r:reg);
+	begin
+		readln(r.dni);
+		if(r.dni<>0)then begin
+			readln(r.tiempo);
+			readln(r.nombre);
+		end;
+	end;
+	
+	procedure LeerA2(var r:reg);
+	begin
+		r.dni:=Random(10)+1;
+		if(r.dni<>0)then begin
+			r.tiempo:=Random(100)/13;
+			writeln('Ingresar Nombre');
+			readln(r.nombre);
+		end;
+	end;
+	
+	procedure crearA(var a:arbol; r:Reg);
+	begin
+		if(a<>nil)then begin
+			if(r.tiempo<=a^.dato.tiempo)then
+				crearA(a^.hi,r)
+			else
+				crearA(a^.hd,r);
+		end
+		else begin
+			new(a);
+			a^.dato:=r;
+			a^.hi:=nil;
+			a^.hd:=nil;
+		end;
+	end;
+	
+	procedure cargarA(var a:arbol);
+	var
+		r:Reg;
+		i:integer;
+	begin
+		LeerA2(r);
+		while(r.dni<>0)do begin
+			for i:=1 to 10 do begin
+				crearA(a,r);
+				LeerA2(r);
+			end;
+			r.dni:=0;
+		end;
+	end;
+	
+	procedure InsertarOrd(var l:lista; r:Reg);
+	var
+		aux:lista;
+		act:lista;
+		ant:lista;
+	begin
+		ant:=l;
+		act:=l;
+		new(aux);
+		aux^.dato:=r;
+		while(act<>nil)and(r.tiempo>act^.dato.tiempo)do begin
+			ant:=act;
+			act:=act^.sig;
+		end;
+		if(ant=act)then
+			l:=aux
+		else
+			ant^.sig:=aux;
+		aux^.sig:=act;
+	end;
+	
+	procedure MenorTiempo(a:arbol; var dni:integer; var nombre:string);
+	begin
+		if(a^.hi<>nil)then
+			MenorTiempo(a^.hi,dni,nombre)
+		else begin
+			dni:=a^.dato.dni;
+			nombre:=a^.dato.nombre;
+		end;
+	end;
+	
+	procedure change(var n1:real; var n2:real);
+	var
+		aux:real;
+	begin
+		if(n1>n2)then begin
+			aux:=n1;
+			n1:=n2;
+			n2:=aux;
+		end;
+	end;
+	
+	procedure Rango(a:arbol; n1:real; n2:real; var l:lista);
+	begin
+		if(a<>nil)then begin
+			if(a^.dato.tiempo>=n1)then begin
+				if(a^.dato.tiempo<=n2)then begin
+					InsertarOrd(l,a^.dato);
+					Rango(a^.hi,n1,n2,l);
+					Rango(a^.hd,n1,n2,l);
+				end
+				else
+					Rango(a^.hi,n1,n2,l);
+			end
+			else
+				Rango(a^.hd,n1,n2,l);
+		end;
+	end;
+	
+	procedure informarA(a:arbol);
+	begin
+		if(a<>nil)then begin
+			informarA(a^.hi);
+			writeln('Tiempo: ',a^.dato.tiempo,'. Nombre: ',a^.dato.nombre,'. DNI: ',a^.dato.dni);
+			informarA(a^.hd);
+		end;
+	end;
+	
+	procedure informarL(l:lista);
+	begin
+		while(l<>nil)do begin
+			writeln('Tiempo: ',l^.dato.tiempo,'. Nombre: ',l^.dato.nombre,'. DNI: ',l^.dato.dni);
+			l:=l^.sig;
+		end;
+	end;
+var
+	dni:integer;
+	nombre:string;
+	a:arbol;
+	l:lista;
+	n1:real;
+	n2:real;
+begin
+	a:=nil;
+	l:=nil;
+	cargarA(a);
+	informarA(a);
+	MenorTiempo(a,dni,nombre);
+	writeln('Menor tiempo nombre: ',nombre,'. DNI: ',dni);
+	writeln('Ingresar real n1');
+	readln(n1);
+	writeln('Ingresar real n2');
+	readln(n2);
+	change(n1,n2);
+	Rango(a,n1,n2,l);
+	informarL(l);
+end.

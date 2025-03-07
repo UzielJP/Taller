@@ -1,0 +1,48 @@
+programa EJ1_P1
+procesos
+  proceso agrarrarFlor(ES CantF:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      CantF:=CantF+1
+  fin
+areas
+  areap: AreaC(1,1,100,100)
+robots
+  robot movedor
+  variables
+    CantProvisoriaF:numero
+    CantTotalF:numero
+    CantCallesSinFlor:numero
+  comenzar
+    CantProvisoriaF:=0
+    CantCallesSinFlor:=0
+    CantTotalF:=0
+    agrarrarFlor(CantProvisoriaF)
+    si(CantProvisoriaF>0)
+      CantTotalF:=CantTotalF+CantProvisoriaF
+    sino
+      CantCallesSinFlor:=CantCallesSinFlor+1
+    mientras(PosCa<100)
+      mover 
+      CantProvisoriaF:=0
+      agrarrarFlor(CantProvisoriaF)
+      si(CantProvisoriaF>0)
+        CantTotalF:=CantTotalF+CantProvisoriaF 
+      sino
+        CantCallesSinFlor:=CantCallesSinFlor+1
+    Informar(CantTotalF)
+    Informar(CantCallesSinFlor)
+  fin
+variables
+  r1:movedor
+  r2:movedor
+  r3:movedor
+comenzar
+  AsignarArea(r1,areap)
+  AsignarArea(r2,areap)
+  AsignarArea(r3,areap)
+  Iniciar(r1,1,1)
+  Iniciar(r2,3,1)
+  Iniciar(r3,5,1)
+fin

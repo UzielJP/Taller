@@ -1,0 +1,153 @@
+program uziel2;
+
+type
+    
+    RegistroA1=record
+        codigoP:integer;
+        fecha:integer;
+        Unidad:integer;
+    end;   
+    
+    arbolV= ^arbolVenta;
+    
+    arbolVenta=record
+        reg:RegistroA1;
+        hi:arbolV;
+        hd:arbolV;
+    end;
+    
+    arbolP= ^arbolProducto;
+    
+    arbolProducto=record
+        codigoP:integer;
+        cantTotal:integer;
+        hi:arbolP;
+        hd:arbolP;
+    end;
+    
+    procedure crearArb1(var a:arbolV; r:RegistroA1);
+        begin
+            if(a<>nil)then
+                begin
+                    if(a^.reg.codigoP>r.codigoP)then
+                        begin
+                            writeln('arbol1 iz');
+                            crearArb1(a^.hi,r);
+                        end
+                    else
+                        begin
+                            writeln('arbol1 iz');
+                            crearArb1(a^.hd,r);
+                        end
+                end
+            else begin
+                writeln('nueva venta del producto: ',r.codigoP);
+                new(a);
+                a^.reg:=r;
+            end
+        end;
+    
+    procedure crearArb2(var a:arbolP; r:RegistroA1);
+        begin
+            if(a=nil)then
+                begin
+                    writeln('nuevo producto: ',r.codigoP);
+                    new(a);
+                    a^.codigoP:=r.codigoP;
+                    a^.cantTotal:=r.Unidad;
+                end
+            else
+                begin
+                    if(a^.codigoP=r.codigoP)then
+                        begin
+                            writeln('actualizando producto: ',r.codigoP);
+                            a^.cantTotal:=a^.cantTotal+r.Unidad;
+                        end
+                    else
+                        begin
+                            if(a^.codigoP>r.codigoP)then
+                                begin
+                                    writeln('arbol2 iz');
+                                    crearArb2(a^.hi,r);
+                                end
+                            else
+                                begin
+                                    writeln('arbol2 iz');
+                                    crearArb2(a^.hd,r);
+                                end
+                        end
+                end
+        end;
+
+    procedure cargarArbol(var av:arbolV; var ap:arbolP);
+        var
+            r:RegistroA1;
+        begin
+            writeln('ingresar codigo: ');
+            readln(r.codigoP);
+            while(r.codigoP<>0)do begin
+                writeln('ingresar fecha: ');
+                readln(r.fecha);
+                writeln('ingresar unidad: ');
+                readln(r.Unidad);
+                crearArb1(av,r);
+                crearArb2(ap,r);
+                writeln('ingresar nuevo codigo: ');
+                readln(r.codigoP);
+            end;
+        end;
+
+   procedure buscar1(a:arbolV; var totalv:integer; codigo:integer);
+        begin
+            if(a<>nil)then begin
+            
+                if(a^.reg.codigoP=codigo)then
+                    totalv:=totalv+a^.reg.codigoP;
+                    
+                if(a^.reg.codigoP>codigo)then
+                    buscar1(a^.hi,totalv,codigo)
+                else 
+                    buscar1(a^.hd,totalv,codigo)
+                    
+            end;
+        end;
+
+    procedure buscar2(a:arbolP; var totalp:integer; codigo:integer);
+        begin
+            if(a<>nil)then
+            
+                if(a^.codigoP=codigo)then
+                    totalp:=totalp+a^.codigoP
+                else begin
+                
+                    if(a^.codigoP>codigo)then
+                        buscar2(a^.hi,totalp,codigo)
+                    else
+                        buscar2(a^.hd,totalp,codigo)
+                        
+                end
+                
+        end;
+
+    
+var
+    av:arbolV;
+    ap:arbolP;
+    totalp:integer;
+    totalv:integer;
+    codigo:integer;
+begin
+    av:=nil;
+    ap:=nil;
+    totalp:=0;
+    totalv:=0;
+    cargarArbol(av,ap);
+    writeln('ingresar codigo a buscar: ');
+    readln(codigo);
+    buscar1(av,totalv,codigo);
+    writeln(totalv);
+    writeln('ingresar codigo a buscar: ');
+    readln(codigo);
+    buscar2(ap,totalp,codigo);
+    writeln(totalp);
+end.

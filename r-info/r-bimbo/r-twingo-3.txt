@@ -1,0 +1,109 @@
+programa ejem3
+procesos
+  proceso comparar(ES max:numero ES maxn:numero E bolsa:numero E nombre:numero)
+  comenzar
+    si(bolsa>max)
+      max:=bolsa
+      maxn:=nombre
+  fin
+  proceso hayflor(ES c:boolean ES b:numero)
+  comenzar
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      b:=b+1
+    sino
+      c:=F
+  fin
+areas
+  areacomp: AreaC(2,2,10,10)
+  area1: AreaP(2,1,2,1)
+  area2: AreaP(3,1,3,1)
+  area3: AreaP(4,1,4,1)
+  area4: AreaP(5,1,5,1)
+  areaJ: AreaP(1,1,1,1)
+robots
+  robot roboto
+  variables
+    bolsa:numero
+    c:boolean
+    calleI:numero
+    avenidaI:numero
+    nombre:numero
+    largo:numero
+    alto:numero 
+  comenzar
+    c:=V
+    bolsa:=0
+    avenidaI:=PosAv
+    calleI:=PosCa
+    RecibirMensaje(nombre,jefeF)
+    RecibirMensaje(alto,jefeF)
+    RecibirMensaje(largo,jefeF)
+    mientras(c=V)
+      BloquearEsquina(alto,largo)
+      Pos(alto,largo)
+      hayflor(c,bolsa)
+      Pos(avenidaI,calleI)
+      LiberarEsquina(alto,largo)
+    EnviarMensaje(nombre,jefeF)
+    EnviarMensaje(bolsa,jefeF)
+  fin
+  robot jefe
+  variables
+    bolsa:numero
+    nombre:numero
+    max:numero
+    maxN:numero
+    largo:numero
+    alto:numero
+  comenzar
+    Random(alto,2,10)
+    Random(largo,2,10)
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(alto,robot1)
+    EnviarMensaje(largo,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(alto,robot2)
+    EnviarMensaje(largo,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(alto,robot3)
+    EnviarMensaje(largo,robot3)
+    EnviarMensaje(4,robot4)
+    EnviarMensaje(alto,robot4)
+    EnviarMensaje(largo,robot4)
+    repetir 4
+      RecibirMensaje(nombre,*)
+      si(nombre=1)
+        RecibirMensaje(bolsa,robot1)
+      si(nombre=2)
+        RecibirMensaje(bolsa,robot2)
+      si(nombre=3)
+        RecibirMensaje(bolsa,robot3)
+      si(nombre=4)
+        RecibirMensaje(bolsa,robot4)
+      comparar(max,maxN,bolsa,nombre)
+    Informar(nombre)
+    Informar(bolsa)
+  fin
+variables
+  robot1:roboto
+  robot2:roboto
+  robot3:roboto
+  robot4:roboto
+  jefeF:jefe
+comenzar
+  AsignarArea(robot1,area1)
+  AsignarArea(robot1,areacomp)
+  AsignarArea(robot2,area2)
+  AsignarArea(robot2,areacomp)
+  AsignarArea(robot3,area3)
+  AsignarArea(robot3,areacomp)
+  AsignarArea(robot4,area4)
+  AsignarArea(robot4,areacomp)
+  AsignarArea(jefeF,areaJ)
+  Iniciar(jefeF,1,1)
+  Iniciar(robot1,2,1)
+  Iniciar(robot2,3,1)
+  Iniciar(robot3,4,1)
+  Iniciar(robot4,5,1)
+fin

@@ -1,0 +1,150 @@
+program uzielpro;
+type
+    pasaje=record
+        destino:integer;
+        cliente:integer;
+        vuelo:integer;
+        monto:real;
+    end;
+    
+        
+    lista= ^nodoL;
+    
+    nodoL=record
+        dato:pasaje;
+        sig:lista;
+    end;
+    
+    info=record
+        destino:integer;
+        l:lista;
+    end;
+    
+    arbol= ^nodoA;
+    
+    nodoA=record
+        dato:info;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    {procedure crearL(var l:lista; r:pasaje);
+        var
+            ant:lista;
+            aux:lista;
+        begin
+            ant:=l;
+            aux:=l;
+            while(aux<>nil) do begin
+                writeln('codigo3');
+                ant:=aux;
+                aux:=aux^.sig;
+            end;
+            writeln('codigo5');
+            new(aux);
+            aux^.dato:=r;
+            aux^.sig:=nil;
+            ant^.sig:=aux;
+            writeln('codigo6');
+        end;}
+    
+    procedure crearL(var l:lista; r:pasaje);
+        var
+            aux:lista;
+        begin
+            new(aux);
+            aux^.dato:=r;
+            aux^.sig:=nil;
+            l:=aux;
+        end;
+    
+    procedure crearA(var a:arbol; r:pasaje);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.destino=r.destino)then
+                    crearL(a^.dato.l,r)
+                else begin
+                    if(a^.dato.destino>r.destino)then
+                        crearA(a^.hi,r)
+                    else
+                        crearA(a^.hd,r)
+                end
+            end 
+            else begin
+                new(a);
+                a^.dato.l:=nil;
+                a^.dato.destino:=r.destino;
+                crearL(a^.dato.l,r);
+                writeln('codigo1');
+            end;
+        end;
+        
+    procedure recorrerL(l:lista; var cant:integer);
+        begin
+            while(l<>nil)do begin
+                cant:=cant+1;
+                l:=l^.sig;
+            end;
+        end;
+        
+    procedure cantPasajes(a:arbol; destino:integer; var cant:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.destino=destino)then
+                    recorrerL(a^.dato.l,cant)
+                else begin
+                    if(a^.dato.destino>destino)then
+                        cantPasajes(a^.hi,destino,cant)
+                    else
+                        cantPasajes(a^.hd,destino,cant)
+                end
+            end;
+        end;
+    
+    procedure mayorD(a:arbol; var destino:integer; var cant:integer; var cant2:integer); 
+        begin
+            if(a<>nil)then begin
+                recorrerL(a^.dato.l,cant);
+                if(cant2<cant)then begin
+                    cant2:=cant;
+                    destino:=a^.dato.destino;
+                end;
+                mayorD(a^.hi,destino,cant,cant2);
+                mayorD(a^.hd,destino,cant,cant2);
+            end;
+        end;
+    
+    procedure cargarA(var a:arbol);
+        var
+            r:pasaje;
+        begin
+            r.monto:=Random(9999);
+            while(r.monto<>0)do begin
+                r.vuelo:=Random(7000);
+                r.cliente:=Random(100)+1;
+                r.destino:=Random(500)+1;
+                writeln('codigo1');
+                crearA(a,r);
+                r.monto:=Random(9999)/(Random(10)+1);
+            end;
+            
+        end;
+var
+    a:arbol;
+    destinoM:integer;
+    destino:integer;
+    cant:integer;
+    mayor:integer;
+    comp:integer;
+begin
+    a:=nil;
+    cant:=0;
+    mayor:=0;
+    comp:=0;
+    cargarA(a);
+    readln(destino);
+    cantPasajes(a,destino,cant);
+    mayorD(a,destinoM,mayor,comp);
+    writeln('cantidad de viajes hechos al destino: ',destino,' es de: ',cant);
+    writeln('destino con mayor cantidad de viajes es: ',destinoM,' con un total de: ',mayor);
+end.

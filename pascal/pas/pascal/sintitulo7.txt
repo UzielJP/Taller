@@ -1,0 +1,165 @@
+program uziel6;
+type
+    final=record
+        codAlum:integer;
+        codMat:integer;
+        nota:integer;
+    end;
+    
+    vectorN= array [1..30] of integer;
+    
+    info=record
+        diml:integer;
+        codAlum:integer;
+        v:vectorN;
+    end;
+    
+    arbol= ^nodoA;
+    
+    nodoA=record
+        dato:info;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    lista= ^nodoL;
+    
+    nodoL=record
+        dato:final;
+        sig:lista;
+    end;
+    
+    vectorL= array [1..30] of lista;
+    
+    procedure agregarNota(var v:vectorN; var diml:integer; n:integer);
+        begin
+            if(n>=4)then begin
+                diml:=diml+1;
+                v[diml]:=n;
+                writeln('codigoV2');
+            end;
+            writeln('codigo1');
+        end;
+        
+    procedure crearA(var a:arbol; codAlum:integer; n:integer);
+        begin
+            if(a<>nil)then begin
+                if(codAlum=a^.dato.codAlum)then
+                    agregarNota(a^.dato.v,a^.dato.diml,n)
+                else begin
+                    if(a^.dato.codAlum>codAlum)then
+                        crearA(a^.hi,codAlum,n)
+                    else
+                        crearA(a^.hd,codAlum,n);
+                end;
+            end
+            else begin
+                new(a);
+                a^.dato.codAlum:=codAlum;
+                a^.dato.diml:=0;
+                agregarNota(a^.dato.v,a^.dato.diml,n);
+                writeln('codigo3');
+            end;
+            writeln('codigo2');
+        end;
+        
+    procedure crearL(var l:lista; r:final);
+        begin
+            if(l<>nil)then 
+                crearL(l^.sig,r)
+            else begin
+                new(l);
+                l^.sig:=nil;
+                l^.dato:=r;
+                writeln('codigoL1');
+            end;
+        end;
+        
+    procedure leerDatos(var a:arbol; var v:vectorL);
+        var
+            r:final;
+        begin
+            writeln('Ingresar nota');
+            readln(r.nota);
+            while(r.nota<>-1)do begin
+                writeln('Ingresar codigo alumno');
+                readln(r.codAlum);
+                writeln('Ingresar codigo materia');
+                readln(r.codMat);
+                crearA(a,r.codAlum,r.nota);
+                crearL(v[r.codMat],r);
+                writeln('Ingresar noota de nuevo');
+                readln(r.nota);
+            end;
+        end;
+        
+    procedure recorrerL(a:arbol; cod:integer; var SP:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.codAlum>cod)then begin
+                    SP:=SP+1;
+                    recorrerL(a^.hi,cod,SP);
+                end
+                else
+                    recorrerL(a^.hd,cod,SP);
+            end;
+        end;
+    
+    procedure change(var LI:integer; var LS:integer);
+        var
+            aux:integer;
+        begin
+            if(LI>LS)then begin
+                aux:=LI;
+                LI:=LS;
+                LS:=aux;
+            end;
+        end;
+    
+    procedure buscar(a:arbol; var cant:integer; LI:integer; lS:integer; v:integer);
+        begin
+            if(a<>nil)then begin
+                if(a^.dato.codAlum>LI)then begin
+                    if(a^.dato.codAlum<LS)then begin
+                        writeln('diml: ',a^.dato.diml);
+                        writeln('codigo: ',v);
+                        if(a^.dato.diml=v)then
+                            cant:=cant+1;
+                        buscar(a^.hi,cant,LI,LS,v);
+                        buscar(a^.hd,cant,LI,LS,v);
+                    end
+                    else
+                        buscar(a^.hi,cant,LI,LS,v)
+                end
+                else
+                    buscar(a^.hd,cant,LI,LS,v);
+            end;
+        end;
+var
+    a:arbol;
+    v:vectorL;
+    SP:integer;
+    cant:integer;
+    LI:integer;
+    LS:integer;
+    cod:integer;
+begin
+    a:=nil;
+    SP:=0;
+    cant:=0;
+    leerDatos(a,v);
+    writeln('Ingresar codigo a comparar');
+    readln(cod);
+    recorrerL(a,cod,SP);
+    writeln(SP);
+    writeln('Ingresar limite inferior');
+    readln(LI);
+    writeln('Ingresar limite superior');
+    readln(LS);
+    writeln('Ingresar codigo a comparar:');
+    readln(cod);
+    change(LI,LS);
+    buscar(a,cant,LI,LS,cod);
+    writeln('La cantidad intermedia es de:');
+    writeln(cant);
+end.

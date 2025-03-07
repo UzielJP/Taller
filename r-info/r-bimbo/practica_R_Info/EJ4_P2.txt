@@ -1,0 +1,173 @@
+programa EJ4_P2 
+procesos 
+  proceso agrarrarFlor(ES Bolsa:numero) 
+  comenzar 
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+      Bolsa:=Bolsa+1 
+  fin 
+  proceso agarrarPapel(ES Bolsa:numero) 
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel 
+      Bolsa:=Bolsa+1 
+  fin
+  proceso Recolectar(E Avenida:numero E Calle:numero  ES Bolsa:numero)
+  variables
+    ActualAv:numero
+    ActualCa:numero
+  comenzar
+    ActualAv:=PosAv
+    ActualCa:=PosCa
+    Pos(Avenida,Calle)
+    agarrarPapel(Bolsa)
+    agrarrarFlor(Bolsa)
+    Pos(Avenida,Calle)
+  fin
+areas
+  areac: AreaC(25,25,75,75)
+  areap1: AreaP(25,1,25,1)
+  areap2: AreaP(30,1,30,1)
+  areap3: AreaP(35,1,35,1)
+  areap4: AreaP(40,1,40,1)
+  areapFisc: AreaP(1,1,1,1)
+robots
+  robot Recolector
+  variables
+    Id:numero
+    Bolsa:numero
+    fini:numero
+    Avenida:numero
+    Calle:numero
+  comenzar
+    RecibirMensaje(Id,Fiscal)
+    fini:=0
+    Bolsa:=0
+    mientras(fini=0)
+      RecibirMensaje(fini,Fiscal)
+      si(fini=0)
+        RecibirMensaje(Avenida,Fiscal)
+        RecibirMensaje(Calle,Fiscal)
+        Recolectar(Avenida,Calle,Bolsa)
+    EnviarMensaje(Id,Fiscal)   
+    EnviarMensaje(Bolsa,Fiscal)
+    RecibirMensaje(fini,Fiscal)
+    si(fini=2)
+      RecibirMensaje(Avenida,Fiscal)
+      RecibirMensaje(Calle,Fiscal)
+      Pos(Avenida,Calle)
+      Informar(Id)
+      Informar(PosAv)
+      Informar(PosCa)
+  fin
+  robot Servidor
+  variables
+    Avenida:numero
+    Calle:numero
+    Id:numero
+    Bolsa1:numero
+    Bolsa2:numero
+    Bolsa3:numero
+    Bolsa4:numero
+  comenzar
+    EnviarMensaje(1,R1)
+    EnviarMensaje(2,R2)
+    EnviarMensaje(3,R3)
+    EnviarMensaje(4,R4)
+    repetir 10
+      Random(Id,1,4)
+      Random(Avenida,25,75)
+      Random(Calle,25,75)
+      si(Id=1)
+        EnviarMensaje(0,R1)
+        EnviarMensaje(Avenida,R1)
+        EnviarMensaje(Calle,R1)
+      sino
+        si(Id=2)
+          EnviarMensaje(0,R2)
+          EnviarMensaje(Avenida,R2)
+          EnviarMensaje(Calle,R2)
+        sino
+          si(Id=3)
+            EnviarMensaje(0,R3)
+            EnviarMensaje(Avenida,R3)
+            EnviarMensaje(Calle,R3)
+          sino
+            EnviarMensaje(0,R4)
+            EnviarMensaje(Avenida,R4)
+            EnviarMensaje(Calle,R4)
+    EnviarMensaje(1,R1)
+    EnviarMensaje(1,R2)
+    EnviarMensaje(1,R3)
+    EnviarMensaje(1,R4)
+    repetir 4
+      RecibirMensaje(Id,*)
+      si(Id=1)
+        RecibirMensaje(Bolsa1,R1)
+        Informar(1) 
+      sino
+        si(Id=2)
+          RecibirMensaje(Bolsa2,R2)
+          Informar(2) 
+        sino
+          si(Id=3)
+            RecibirMensaje(Bolsa3,R3)
+            Informar(3) 
+          sino
+            RecibirMensaje(Bolsa4,R4)
+            Informar(4) 
+    si(Bolsa1>Bolsa2)&(Bolsa1>Bolsa3)&(Bolsa1>Bolsa4) 
+      EnviarMensaje(2,R1) 
+      EnviarMensaje(50,R1) 
+      EnviarMensaje(50,R1) 
+      EnviarMensaje(3,R2) 
+      EnviarMensaje(3,R3) 
+      EnviarMensaje(3,R4)     
+    sino 
+      si(Bolsa2>Bolsa1)&(Bolsa2>Bolsa3)&(Bolsa2>Bolsa4) 
+        EnviarMensaje(2,R2) 
+        EnviarMensaje(50,R2) 
+        EnviarMensaje(50,R2) 
+        EnviarMensaje(3,R1) 
+        EnviarMensaje(3,R3) 
+        EnviarMensaje(3,R4)  
+      sino 
+        si(Bolsa3>Bolsa1)&(Bolsa3>Bolsa2)&(Bolsa3>Bolsa4) 
+          EnviarMensaje(2,R3) 
+          EnviarMensaje(50,R3)
+          EnviarMensaje(50,R3)
+          EnviarMensaje(3,R1) 
+          EnviarMensaje(3,R2) 
+          EnviarMensaje(3,R4) 
+        sino 
+          si(Bolsa4>Bolsa1)&(Bolsa4>Bolsa2)&(Bolsa4>Bolsa3) 
+            EnviarMensaje(2,R3) 
+            EnviarMensaje(50,R3)
+            EnviarMensaje(50,R3)
+            EnviarMensaje(3,R1) 
+            EnviarMensaje(3,R2) 
+            EnviarMensaje(3,R3) 
+            EnviarMensaje(50,R3) 
+  fin
+variables
+  R1:Recolector
+  R2:Recolector
+  R3:Recolector
+  R4:Recolector
+  Fiscal:Servidor
+comenzar
+  AsignarArea(R1,areap1)
+  AsignarArea(R1,areac)
+  AsignarArea(R2,areap2)
+  AsignarArea(R2,areac)
+  AsignarArea(R3,areap3)
+  AsignarArea(R3,areac)
+  AsignarArea(R4,areap4)
+  AsignarArea(R4,areac)
+  AsignarArea(Fiscal,areapFisc)
+  Iniciar(R1,25,1)
+  Iniciar(R2,30,1)
+  Iniciar(R3,35,1)
+  Iniciar(R4,40,1)
+  Iniciar(Fiscal,1,1)
+fin

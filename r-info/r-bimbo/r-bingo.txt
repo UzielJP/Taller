@@ -1,0 +1,998 @@
+2-1)
+
+a)
+programa ejem4
+procesos
+  proceso juntarF(ES c:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+      c:=c+1 
+  fin
+  proceso recorrer(ES c:numero) 
+  comenzar 
+    mientras(PosCa<10)
+      juntarF(c)
+      mover
+  fin
+  proceso recorrer2(ES c:numero)
+  comenzar
+    mientras(PosCa<20)
+      juntarF(c)
+      mover
+  fin
+  proceso comparar(E r1:numero E r2:numero E FlorR1:numero E FlorR2:numero ES ganador:numero ES dif:numero)
+  comenzar
+    si(FlorR1>FlorR2)
+      ganador:=r1
+      dif:= FlorR1 - FlorR2
+    sino
+      ganador:=r2
+      dif:= FlorR2 - FlorR1
+  fin
+areas
+  areaR1: AreaP(1,1,1,10)
+  areaR2: AreaP(2,11,2,20)
+robots
+  robot R1
+  variables
+    dif:numero
+    bolsa:numero
+    bolsaC:numero
+    nombre:numero
+    nombreC:numero
+    ganador:numero
+  comenzar
+    nombre:=1
+    bolsa:=0
+    recorrer(bolsa)
+    EnviarMensaje(bolsa,robot2)
+    EnviarMensaje(nombre,robot2)
+    RecibirMensaje(bolsaC,robot2)
+    RecibirMensaje(nombreC,robot2)
+    comparar(nombre,nombreC,bolsa,bolsaC,ganador,dif)
+    si(nombre=ganador)
+      Informar(dif)
+  fin  
+  robot R2 
+  variables 
+    dif:numero
+    bolsa:numero 
+    bolsaC:numero 
+    nombre:numero 
+    nombreC:numero 
+    ganador:numero 
+  comenzar 
+    nombre:=2
+    bolsa:=0
+    recorrer2(bolsa) 
+    EnviarMensaje(bolsa,robot1) 
+    EnviarMensaje(nombre,robot1) 
+    RecibirMensaje(bolsaC,robot1) 
+    RecibirMensaje(nombreC,robot1) 
+    comparar(nombre,nombreC,bolsa,bolsaC,ganador,dif) 
+    si(nombre=ganador) 
+      Informar(dif) 
+  fin 
+variables
+  robot1: R1
+  robot2: R2
+comenzar
+  AsignarArea(robot1,areaR1)
+  AsignarArea(robot2,areaR2)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,2,11)
+fin
+
+b)
+
+programa ejem4
+procesos
+  proceso juntarF(ES c:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+      c:=c+1 
+  fin
+  proceso recorrer(ES c:numero) 
+  comenzar 
+    repetir 9 
+      juntarF(c) 
+      mover 
+  fin 
+  proceso comparar(E r1:numero E r2:numero E FlorR1:numero E FlorR2:numero) 
+  variables  
+    dif:numero 
+    ganador:numero 
+  comenzar 
+    si(FlorR1>FlorR2) 
+      ganador:=r1 
+      dif:= FlorR1 - FlorR2 
+    sino  
+      ganador:=r2 
+      dif:= FlorR2 - FlorR1 
+    Informar(ganador) 
+    Informar(dif) 
+  fin 
+areas
+  areaR1: AreaP(1,1,1,10) 
+  areaR2: AreaP(2,11,2,20)
+  areaFisc: AreaP(2,1,2,3) 
+robots
+  robot R1
+  variables
+    bolsa:numero
+    nombre:numero
+  comenzar
+    nombre:=1
+    bolsa:=0 
+    recorrer(bolsa) 
+    EnviarMensaje(bolsa,fisc)
+    EnviarMensaje(nombre,fisc) 
+  fin    
+  robot R2   
+  variables   
+    bolsa:numero   
+    nombre:numero 
+  comenzar 
+    nombre:=2  
+    bolsa:=0  
+    recorrer(bolsa)  
+    EnviarMensaje(bolsa,fisc)   
+    EnviarMensaje(nombre,fisc)    
+  fin   
+  robot fiscalizar  
+  variables
+    nombre1:numero  
+    nombre2:numero
+    bolsa1:numero
+    bolsa2:numero
+  comenzar
+    RecibirMensaje(bolsa1,robot1) 
+    RecibirMensaje(bolsa2,robot2) 
+    RecibirMensaje(nombre1,robot1) 
+    RecibirMensaje(nombre2,robot2) 
+    comparar(nombre1,nombre2,bolsa1,bolsa2) 
+  fin 
+variables 
+  robot1: R1 
+  robot2: R2 
+  fisc: fiscalizar
+comenzar 
+  AsignarArea(robot1,areaR1)   
+  AsignarArea(robot2,areaR2)
+  AsignarArea(fisc,areaFisc)  
+  Iniciar(fisc,2,1)  
+  Iniciar(robot1,1,1)  
+  Iniciar(robot2,2,11)  
+fin
+
+C)
+
+programa ejem4
+procesos
+  proceso juntarF(ES c:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor 
+      c:=c+1 
+  fin
+  proceso recorrer(ES c:numero) 
+  comenzar 
+    repetir 9 
+      juntarF(c) 
+      mover 
+  fin 
+  proceso comparar(E r1:numero E r2:numero E FlorR1:numero E FlorR2:numero) 
+  variables  
+    dif:numero 
+    ganador:numero 
+  comenzar 
+    si(FlorR1>FlorR2) 
+      ganador:=r1 
+      dif:= FlorR1 - FlorR2 
+    sino  
+      ganador:=r2 
+      dif:= FlorR2 - FlorR1 
+    Informar(ganador) 
+    Informar(dif) 
+  fin 
+  proceso calcularM(E bolsa:numero E nombre: numero ES maxN:numero ES max:numero)
+  comenzar
+    si(bolsa>max)
+      max:=bolsa
+      maxN:=nombre
+  fin
+  proceso definir(E nombre:numero ES maxN:numero ES max:numero)
+  variables
+    bolsa:numero
+  comenzar
+    si(nombre=1)
+      RecibirMensaje(bolsa,robot1)
+    si(nombre=2)
+      RecibirMensaje(bolsa,robot2)
+    si(nombre=3)
+      RecibirMensaje(bolsa,robot3)
+    si(nombre=4)
+      RecibirMensaje(bolsa,robot4)
+    si(nombre=5)
+      RecibirMensaje(bolsa,robot5)
+    si(nombre=6)
+      RecibirMensaje(bolsa,robot6)
+  fin
+  proceso mayorG
+  variables
+  comenzar
+  fin
+areas
+  areaR1: AreaP(1,1,1,10) 
+  areaR2: AreaP(2,11,2,20)
+  areaFisc: AreaP(2,1,2,3) 
+robots
+  robot R1
+  variables
+    bolsa:numero
+    nombre:numero
+  comenzar
+    bolsa:=0 
+    RecibirMensaje(nombre,fisc)
+    recorrer(bolsa) 
+    EnviarMensaje(bolsa,fisc)
+    EnviarMensaje(nombre,fisc) 
+  fin       
+  robot fiscalizar  
+  variables
+    nombre:numero 
+    bolsa1:numero
+    max: numero
+    manN: numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(4,robot4)
+    EnviarMensaje(5,robot5)
+    EnviarMensaje(6,robot6)
+    RecibirMensaje(bolsa1,robot1) 
+    RecibirMensaje(bolsa2,robot2) 
+    RecibirMensaje(nombre1,robot1) 
+    RecibirMensaje(nombre2,robot2) 
+    comparar(nombre1,nombre2,bolsa1,bolsa2) 
+  fin 
+variables 
+  robot1: R1 
+  robot2: R1
+  robot3: R1
+  robot4: R1
+  robot5: R1
+  robot6: R1 
+  fisc: fiscalizar
+comenzar 
+  AsignarArea(robot1,areaR1)   
+  AsignarArea(robot2,areaR2)
+  AsignarArea(fisc,areaFisc)  
+  Iniciar(fisc,2,1)  
+  Iniciar(robot1,1,1)  
+  Iniciar(robot2,2,11)  
+fin
+
+c)
+
+programa ejem4   
+procesos    
+  proceso juntarF(ES c:numero)   
+  comenzar   
+    mientras(HayFlorEnLaEsquina)    
+      tomarFlor    
+      c:=c+1    
+  fin   
+  proceso recorrer(ES c:numero)    
+  comenzar      
+    repetir 9    
+      juntarF(c)     
+      mover    
+  fin    
+  proceso calcularM(E bolsa:numero E nombre: numero ES maxN:numero ES max:numero)   
+  comenzar   
+    si(bolsa>max)    
+      max:=bolsa   
+      maxN:=nombre   
+  fin    
+areas   
+  areaR1: AreaP(1,1,1,10)
+  areaR2: AreaP(2,11,2,20)
+  areaR3: AreaP(3,21,3,30)
+  areaR4: AreaP(4,31,4,40)
+  areaR5: AreaP(5,41,5,50)
+  areaR6: AreaP(6,51,6,60)
+  areaFisc: AreaP(2,1,3,3)              
+robots   
+  robot R1   
+  variables   
+    bolsa:numero   
+    nombre:numero 
+  comenzar   
+    bolsa:=0    
+    RecibirMensaje(nombre,fisc)   
+    recorrer(bolsa) 
+    EnviarMensaje(nombre,fisc) 
+    EnviarMensaje(bolsa,fisc)    
+  fin          
+  robot fiscalizar     
+  variables    
+    max: numero   
+    maxN: numero
+    nombre:numero  
+    bolsa:numero  
+  comenzar   
+    max:=0  
+    EnviarMensaje(1,robot1)   
+    EnviarMensaje(2,robot2)   
+    EnviarMensaje(3,robot3)   
+    EnviarMensaje(4,robot4)   
+    EnviarMensaje(5,robot5)   
+    EnviarMensaje(6,robot6)
+    repetir 6 
+      RecibirMensaje(nombre,*)    
+      si(nombre=1)      
+        RecibirMensaje(bolsa,robot1)   
+      si(nombre=2)   
+        RecibirMensaje(bolsa,robot2)   
+      si(nombre=3)   
+        RecibirMensaje(bolsa,robot3)   
+      si(nombre=4)   
+        RecibirMensaje(bolsa,robot4)   
+      si(nombre=5)   
+        RecibirMensaje(bolsa,robot5)   
+      si(nombre=6)   
+        RecibirMensaje(bolsa,robot6)  
+      calcularM(bolsa,nombre,maxN,max)   
+    Informar(maxN)  
+  fin    
+variables    
+  robot1: R1    
+  robot2: R1      
+  robot3: R1   
+  robot4: R1   
+  robot5: R1   
+  robot6: R1    
+  fisc: fiscalizar   
+comenzar    
+  AsignarArea(robot1,areaR1)      
+  AsignarArea(robot2,areaR2)    
+  AsignarArea(robot3,areaR3)   
+  AsignarArea(robot4,areaR4)  
+  AsignarArea(robot5,areaR5)  
+  AsignarArea(robot6,areaR6)  
+  AsignarArea(fisc,areaFisc)     
+  Iniciar(fisc,2,1)     
+  Iniciar(robot1,1,1)     
+  Iniciar(robot2,2,11)     
+  Iniciar(robot3,3,21)  
+  Iniciar(robot4,4,31)  
+  Iniciar(robot5,5,41)  
+  Iniciar(robot6,6,51)  
+fin  
+
+2)
+
+programa ejem4    
+procesos  
+  proceso vuelta 
+  comenzar 
+    repetir 3 
+      derecha 
+  fin    
+  proceso juntarF(ES c:numero)    
+  comenzar    
+    mientras(HayFlorEnLaEsquina)     
+      tomarFlor     
+      c:=c+1     
+  fin  
+  proceso juntarP(ES c:numero) 
+  comenzar 
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel 
+      c:=c+1 
+  fin 
+  proceso recorrerEscalon(E alto:numero ES bolsaP:numero ES bolsaF:numero) 
+  comenzar 
+    repetir alto 
+      juntarF(bolsaF) 
+      juntarP(bolsaP) 
+      mover 
+  fin 
+  proceso diferencia(E bolsaP:numero E bolsaF:numero ES dif:numero) 
+  comenzar 
+    si(bolsaP<>bolsaF) 
+      dif:=dif+1 
+  fin    
+  proceso recorrer(E alto:numero ES dif:numero)  
+  variables 
+    bolsaP:numero 
+    bolsaF:numero    
+  comenzar       
+    bolsaP:=0 
+    bolsaF:=0 
+    repetir 4     
+      juntarF(bolsaF) 
+      juntarP(bolsaP) 
+      derecha      
+      mover 
+      vuelta 
+      recorrerEscalon(alto,bolsaP,bolsaF) 
+      diferencia(bolsaP,bolsaF,dif)           
+  fin       
+areas    
+  areaR1: AreaP(2,1,6,21) 
+  areaR2: AreaP(7,1,11,21) 
+  areaR3: AreaP(12,1,16,21) 
+  areaJefe: AreaP(1,1,1,1)               
+robots    
+  robot R1    
+  variables     
+    dif:numero 
+    alto:numero  
+  comenzar    
+    dif:=0 
+    Random(alto,1,5)        
+    recorrer(alto,dif)
+    EnviarMensaje(dif,jefeR)      
+  fin           
+  robot jefe      
+  variables     
+    total: numero      
+    bolsa:numero   
+  comenzar 
+    total:=0    
+    repetir 3 
+      RecibirMensaje(bolsa,*) 
+      total:= total + bolsa 
+    Informar(total)   
+  fin     
+variables     
+  robot1: R1     
+  robot2: R1       
+  robot3: R1       
+  jefeR: jefe     
+comenzar      
+  AsignarArea(robot1,areaR1)        
+  AsignarArea(robot2,areaR2)      
+  AsignarArea(robot3,areaR3)      
+  AsignarArea(jefeR,areaJefe)       
+  Iniciar(jefeR,1,1)       
+  Iniciar(robot1,2,1)       
+  Iniciar(robot2,7,1)       
+  Iniciar(robot3,12,1)     
+fin  
+
+3) 
+
+programa ejem4    
+procesos         
+  proceso juntarf(ES c:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      c:=c+1
+  fin
+  proceso juntarP(ES c:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      c:=c+1
+  fin
+  proceso recorrerA(ES bolsa:numero)
+  comenzar
+    juntarP(bolsa)
+    derecha
+    repetir 9
+      juntarP(bolsa)
+      mover
+  fin
+  proceso recorrerB(ES bolsa:numero)
+  comenzar
+    juntarf(bolsa)
+    derecha
+    repetir 9
+      juntarf(bolsa)
+      mover
+  fin
+areas   
+  areaA: AreaPC(1,1,20,1)
+  areaB: AreaPC(1,5,20,5)              
+robots  
+  robot A1
+  variables
+    bolsa:numero
+    continuar:boolean
+  comenzar
+    continuar:=F
+    bolsa:=0
+    mientras(continuar = F)
+      recorrerA(bolsa)
+      EnviarMensaje(bolsa,robotA2)
+      RecibirMensaje(continuar,robotA2)
+  fin
+  robot A2
+  variables
+    bolsa:numero
+    total:numero
+  comenzar
+    RecibirMensaje(bolsa,robotA1)
+    recorrerA(bolsa)
+    EnviarMensaje(V,robotA1)
+    Informar(bolsa)
+  fin
+  robot B1
+  variables 
+    bolsa:numero 
+    continuar:boolean 
+  comenzar 
+    continuar:=F 
+    bolsa:=0 
+    mientras(continuar = F) 
+      recorrerB(bolsa)
+      EnviarMensaje(bolsa,robotB2)
+      RecibirMensaje(continuar,robotB2)
+  fin 
+  robot B2
+  variables 
+    bolsa:numero 
+    total:numero 
+  comenzar 
+    RecibirMensaje(bolsa,robotB1)
+    recorrerB(bolsa) 
+    EnviarMensaje(V,robotB1)
+    Informar(bolsa) 
+  fin      
+variables         
+  robotA1: A1
+  robotA2: A2
+  robotB1: B1
+  robotB2: B2
+comenzar     
+  AsignarArea(robotA1,areaA)
+  AsignarArea(robotA2,areaA)
+  AsignarArea(robotB1,areaB)
+  AsignarArea(robotB2,areaB)
+  Iniciar(robotA1,1,1)  
+  Iniciar(robotA2,11,1)  
+  Iniciar(robotB1,1,5)  
+  Iniciar(robotB2,11,5)     
+fin  
+
+3-b)
+
+programa ejem4     
+procesos          
+  proceso juntarf(ES c:numero) 
+  comenzar  
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor 
+      c:=c+1 
+  fin 
+  proceso juntarP(ES c:numero) 
+  comenzar 
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel 
+      c:=c+1 
+  fin 
+  proceso recorrerA(ES bolsa:numero) 
+  comenzar 
+    juntarP(bolsa) 
+    repetir 9 
+      juntarP(bolsa) 
+      mover 
+  fin 
+  proceso recorrerB(ES bolsa:numero)  
+  comenzar 
+    juntarf(bolsa) 
+    repetir 9 
+      juntarf(bolsa) 
+      mover 
+  fin 
+areas    
+  areaA: AreaPC(1,1,60,1) 
+  areaB: AreaPC(1,5,60,5)               
+robots   
+  robot A1 
+  variables 
+    bolsa:numero 
+    continuar:boolean 
+  comenzar 
+    continuar:=F 
+    bolsa:=0 
+    derecha
+    repetir 2 
+      recorrerA(bolsa) 
+      EnviarMensaje(bolsa,robotA2) 
+      RecibirMensaje(bolsa,robotA2)
+      Pos(PosAv+10,PosCa) 
+  fin 
+  robot A2 
+  variables 
+    bolsa:numero 
+    total:numero 
+  comenzar
+    derecha
+    repetir 2 
+      RecibirMensaje(bolsa,robotA1) 
+      recorrerA(bolsa) 
+      EnviarMensaje(bolsa,robotA1) 
+      Pos(PosAv+10,PosCa)
+    Informar(bolsa) 
+  fin 
+  robot B1 
+  variables  
+    bolsa:numero  
+    continuar:boolean  
+  comenzar  
+    continuar:=F  
+    bolsa:=0
+    derecha  
+    repetir 2  
+      recorrerB(bolsa) 
+      EnviarMensaje(bolsa,robotB2) 
+      RecibirMensaje(continuar,robotB2)
+      Pos(PosAv+10,PosCa) 
+  fin  
+  robot B2 
+  variables  
+    bolsa:numero  
+    total:numero  
+  comenzar
+    derecha
+    repetir 2  
+      RecibirMensaje(bolsa,robotB1) 
+      recorrerB(bolsa)  
+      EnviarMensaje(bolsa,robotB1)
+      Pos(PosAv+10,PosCa)
+    Informar(bolsa)   
+  fin       
+variables          
+  robotA1: A1 
+  robotA2: A2 
+  robotB1: B1 
+  robotB2: B2 
+comenzar      
+  AsignarArea(robotA1,areaA) 
+  AsignarArea(robotA2,areaA) 
+  AsignarArea(robotB1,areaB) 
+  AsignarArea(robotB2,areaB) 
+  Iniciar(robotA1,1,1)   
+  Iniciar(robotA2,11,1)   
+  Iniciar(robotB1,1,5)   
+  Iniciar(robotB2,11,5)      
+fin   
+
+4)
+
+programa ejem4     
+procesos          
+  proceso juntarF(ES c:numero) 
+  comenzar  
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor 
+      c:=c+1
+  fin 
+  proceso juntarP(ES c:numero) 
+  comenzar 
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel 
+      c:=c+1
+  fin 
+areas    
+  areac: AreaC(25,25,75,75)
+  area1: AreaP(25,1,25,1)
+  area2: AreaP(30,1,30,1)
+  area3: AreaP(35,1,35,1)
+  area4: AreaP(40,1,40,1)
+  areaJ: AreaP(1,1,1,1)               
+robots   
+  robot door 
+  variables 
+    bolsa:numero 
+    continuar:boolean
+    nombre:numero
+    alto:numero
+    largo:numero 
+  comenzar 
+    bolsa:=0
+    RecibirMensaje(nombre,jefeF)
+    RecibirMensaje(continuar,jefeF)
+    mientras(continuar=F)
+      Random(alto,25,75)
+      Random(largo,25,75)
+      Pos(alto,largo)
+      juntarF(bolsa)
+      juntarP(bolsa)
+      EnviarMensaje(alto,jefeF)
+      EnviarMensaje(largo,jefeF)
+      RecibirMensaje(continuar,jefeF)
+  fin 
+  robot jefe
+  variables 
+    bolsa:numero
+    nombre:numero
+    ganador:numero 
+    alto:numero
+    largo:numero
+  comenzar
+    ganador:=0
+    EnviarMensaje(1,door1)
+    EnviarMensaje(2,door2)
+    EnviarMensaje(3,door3)
+    EnviarMensaje(4,door4)
+    repetir 10
+      Random(nombre,1,4) 
+      si(nombre=1)
+        EnviarMensaje(F,door1)
+        RecibirMensaje(alto,door1)
+        RecibirMensaje(largo,door1)
+      si(nombre=2)
+        EnviarMensaje(F,door2)
+        RecibirMensaje(alto,door2)
+        RecibirMensaje(largo,door2)
+      si(nombre=3)
+        EnviarMensaje(F,door3)
+        RecibirMensaje(alto,door3)
+        RecibirMensaje(largo,door3)
+      si(nombre=4)
+        EnviarMensaje(F,door4)
+        RecibirMensaje(alto,door4)
+        RecibirMensaje(largo,door4)
+      si((alto=50)&(largo=50))
+        ganador:=nombre 
+    Informar(ganador) 
+    EnviarMensaje(V,door1)
+    EnviarMensaje(V,door2)
+    EnviarMensaje(V,door3)
+    EnviarMensaje(V,door4)
+  fin 
+variables          
+  door1: door 
+  door2: door
+  door3: door
+  door4: door
+  jefeF: jefe
+comenzar      
+  AsignarArea(door1,areac)
+  AsignarArea(door1,area1) 
+  AsignarArea(door2,areac)
+  AsignarArea(door2,area2)  
+  AsignarArea(door3,areac)
+  AsignarArea(door3,area3)  
+  AsignarArea(door4,areac) 
+  AsignarArea(door4,area4)
+  AsignarArea(jefeF,areaJ)  
+  Iniciar(jefeF,1,1)
+  Iniciar(door1,25,1)   
+  Iniciar(door2,30,1)   
+  Iniciar(door3,35,1)   
+  Iniciar(door4,40,1)      
+fin  
+
+opcion-b)
+
+programa ejem4     
+procesos          
+  proceso juntarF(ES c:numero) 
+  comenzar  
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor 
+      c:=c+1
+  fin 
+  proceso juntarP(ES c:numero) 
+  comenzar 
+    mientras(HayPapelEnLaEsquina) 
+      tomarPapel 
+      c:=c+1
+  fin 
+areas    
+  areac: AreaC(25,25,75,75)
+  area1: AreaP(25,1,25,1)
+  area2: AreaP(30,1,30,1)
+  area3: AreaP(35,1,35,1)
+  area4: AreaP(40,1,40,1)
+  areaJ: AreaP(1,1,1,1)               
+robots   
+  robot door 
+  variables 
+    bolsa:numero 
+    continuar:boolean
+    nombre:numero
+    alto:numero
+    largo:numero 
+  comenzar 
+    bolsa:=0
+    RecibirMensaje(nombre,jefeF)
+    RecibirMensaje(continuar,jefeF)
+    mientras(continuar=F)
+      Random(alto,25,75)
+      Random(largo,25,75)
+      Pos(alto,largo)
+      juntarF(bolsa)
+      juntarP(bolsa)
+      EnviarMensaje(alto,jefeF)
+      EnviarMensaje(largo,jefeF)
+      RecibirMensaje(continuar,jefeF)
+  fin 
+  robot jefe
+  variables 
+    bolsa:numero
+    nombre:numero
+    ganador:numero 
+    alto:numero
+    largo:numero
+  comenzar
+    ganador:=0
+    EnviarMensaje(1,door1)
+    EnviarMensaje(2,door2)
+    EnviarMensaje(3,door3)
+    EnviarMensaje(4,door4)
+    mientras(ganador=0)
+      Random(nombre,1,4) 
+      si(nombre=1)
+        EnviarMensaje(F,door1)
+        RecibirMensaje(alto,door1)
+        RecibirMensaje(largo,door1)
+      si(nombre=2)
+        EnviarMensaje(F,door2)
+        RecibirMensaje(alto,door2)
+        RecibirMensaje(largo,door2)
+      si(nombre=3)
+        EnviarMensaje(F,door3)
+        RecibirMensaje(alto,door3)
+        RecibirMensaje(largo,door3)
+      si(nombre=4)
+        EnviarMensaje(F,door4)
+        RecibirMensaje(alto,door4)
+        RecibirMensaje(largo,door4)
+      si(alto=50)
+        si(largo=50)
+          ganador:=nombre 
+    Informar(ganador) 
+    EnviarMensaje(V,door1)
+    EnviarMensaje(V,door2)
+    EnviarMensaje(V,door3)
+    EnviarMensaje(V,door4)
+  fin 
+variables          
+  door1: door 
+  door2: door
+  door3: door
+  door4: door
+  jefeF: jefe
+comenzar      
+  AsignarArea(door1,areac)
+  AsignarArea(door1,area1) 
+  AsignarArea(door2,areac)
+  AsignarArea(door2,area2)  
+  AsignarArea(door3,areac)
+  AsignarArea(door3,area3)  
+  AsignarArea(door4,areac) 
+  AsignarArea(door4,area4)
+  AsignarArea(jefeF,areaJ)  
+  Iniciar(jefeF,1,1)
+  Iniciar(door1,25,1)   
+  Iniciar(door2,30,1)   
+  Iniciar(door3,35,1)   
+  Iniciar(door4,40,1)      
+fin 
+
+opcion-c)
+
+programa eje4
+procesos            
+  proceso juntarF(ES c:numero)  
+  comenzar   
+    mientras(HayFlorEnLaEsquina) 
+      tomarFlor  
+      c:=c+1 
+  fin  
+  proceso juntarP(ES c:numero)  
+  comenzar  
+    mientras(HayPapelEnLaEsquina)  
+      tomarPapel  
+      c:=c+1 
+  fin  
+areas     
+  areac: AreaC(25,25,75,75) 
+  area1: AreaP(25,1,25,1) 
+  area2: AreaP(30,1,30,1)  
+  area3: AreaP(35,1,35,1) 
+  area4: AreaP(40,1,40,1) 
+  areaJ: AreaP(1,1,1,1)                
+robots     
+  robot door  
+  variables  
+    bolsa:numero  
+    continuar:boolean 
+    nombre:numero 
+    alto:numero 
+    largo:numero  
+    posc:numero
+    posv:numero
+  comenzar  
+    bolsa:=0 
+    RecibirMensaje(nombre,jefeF) 
+    RecibirMensaje(continuar,jefeF) 
+    mientras(continuar=F)
+      posc:= PosCa
+      posv:= PosAv 
+      Random(alto,25,75) 
+      Random(largo,25,75) 
+      Pos(alto,largo) 
+      juntarF(bolsa) 
+      juntarP(bolsa) 
+      Pos(posv,posc) 
+      EnviarMensaje(alto,jefeF) 
+      EnviarMensaje(largo,jefeF)
+      RecibirMensaje(continuar,jefeF) 
+  fin  
+  robot jefe 
+  variables  
+    bolsa:numero 
+    nombre:numero 
+    ganador:numero  
+    alto:numero 
+    largo:numero 
+  comenzar  
+    ganador:=0 
+    EnviarMensaje(1,door1) 
+    EnviarMensaje(2,door2) 
+    EnviarMensaje(3,door3) 
+    EnviarMensaje(4,door4) 
+    mientras(ganador=0) 
+      Random(nombre,1,4)  
+      si(nombre=1) 
+        EnviarMensaje(F,door1) 
+        RecibirMensaje(alto,door1) 
+        RecibirMensaje(largo,door1) 
+      si(nombre=2) 
+        EnviarMensaje(F,door2) 
+        RecibirMensaje(alto,door2) 
+        RecibirMensaje(largo,door2) 
+      si(nombre=3) 
+        EnviarMensaje(F,door3) 
+        RecibirMensaje(alto,door3) 
+        RecibirMensaje(largo,door3) 
+      si(nombre=4) 
+        EnviarMensaje(F,door4) 
+        RecibirMensaje(alto,door4) 
+        RecibirMensaje(largo,door4) 
+      si(alto=50) 
+        si(largo=50) 
+          ganador:=nombre  
+    Informar(ganador)  
+    EnviarMensaje(V,door1) 
+    EnviarMensaje(V,door2) 
+    EnviarMensaje(V,door3) 
+    EnviarMensaje(V,door4) 
+  fin  
+variables           
+  door1: door  
+  door2: door 
+  door3: door 
+  door4: door 
+  jefeF: jefe 
+comenzar        
+  AsignarArea(door1,areac) 
+  AsignarArea(door1,area1)  
+  AsignarArea(door2,areac) 
+  AsignarArea(door2,area2)   
+  AsignarArea(door3,areac) 
+  AsignarArea(door3,area3)   
+  AsignarArea(door4,areac)  
+  AsignarArea(door4,area4) 
+  AsignarArea(jefeF,areaJ)   
+  Iniciar(jefeF,1,1) 
+  Iniciar(door1,25,1)    
+  Iniciar(door2,30,1)    
+  Iniciar(door3,35,1)    
+  Iniciar(door4,40,1)       
+fin  
+
+
+
